@@ -1,0 +1,6 @@
+[book]
+authors = ["Yasumasa Tamura"]
+language = "ja"
+multilingual = false
+src = "src"
+title = "CSC.T364 Workshop on System Design -  Web programming"
