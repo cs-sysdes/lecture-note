@@ -4,3 +4,14 @@ language = "ja"
 multilingual = false
 src = "src"
 title = "CSC.T364 Workshop on System Design -  Web programming"
+
+[output.html]
+additional-css = ["theme/highlight-line-numbers.css", "theme/custom.css"]
+additional-js = ["theme/highlight-line-numbers.js", "theme/custom.js"]
+
+[output.html.print]
+enable = true
+page-break = true
+
+[output.html.playground]
+copyable = false
