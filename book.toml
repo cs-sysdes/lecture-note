@@ -1,13 +1,22 @@
 [book]
-authors = ["Yasumasa Tamura"]
-language = "ja"
-multilingual = false
-src = "src"
 title = "CSC.T364 Workshop on System Design -  Web programming"
+authors = ["Yasumasa Tamura"]
+description = "Lecture note for Web programming course 2022 in CSC.T364 Workshop on System Design"
+language = "ja"
+src = "src"
+
+[build]
+create-missing = false
 
 [output.html]
+default-theme = "light"
+preferred-dark-them = "ayu"
+copy-fonts = true
+mathjax-support = true
+no-section-label = true
 additional-css = ["theme/highlight-line-numbers.css", "theme/custom.css"]
 additional-js = ["theme/highlight-line-numbers.js", "theme/custom.js"]
+git-repository-url = "https://github.com/cs-sysdes/lecture-note"
 
 [output.html.print]
 enable = true
