@@ -1,0 +1,26 @@
+.filename::before {
+    content: "File: ";
+    font-family: "Open sans", sans-serif;
+}
+
+.filename {
+    font-size: 90%;
+    font-family: "Source Code Pro", Consolas, "Ubuntu Mono", Menlo, "DejaVu Sans Mono", monospace, monospace !important;
+}
+
+.memo::before {
+    content: "MEMO\A";
+    font-weight: bold;
+    font-style: italic;
+    white-space: pre;
+}
+
+.memo {
+    display: block;
+    width: 90%;
+    font-size: 80%;
+    margin: 1em auto;
+    padding: 5px 5px;
+    border: solid 1pt var(--quote-border);
+    background-color: var(--quote-bg);
+}
