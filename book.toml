@@ -9,6 +9,7 @@ src = "src"
 create-missing = false
 
 [output.html]
+site-url = "/lecture-note/"
 default-theme = "light"
 preferred-dark-them = "ayu"
 copy-fonts = true
