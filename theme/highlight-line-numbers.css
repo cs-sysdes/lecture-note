@@ -12,9 +12,10 @@ table.hljs-ln {
     user-select: none;
 
     text-align: right;
-    color: #666666;
-    vertical-align: top;
+    color: #888888;
+    vertical-align: center;
     padding-right: 5px;
+    font-size: 80%;
 
     /* your custom style here */
     border: none;
