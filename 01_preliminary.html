@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>CSC.T364 Workshop on System Design -  Web programming</title>
-        <meta name="robots" content="noindex" />
+        <title>01: 演習のための準備 - CSC.T364 Workshop on System Design -  Web programming</title>
         <!-- Custom HTML head -->
 <meta name="robots" content="noindex,nofollow,noarchive"/>
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
@@ -81,7 +80,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><div>02: HTTP通信とルーティング</div></li><li class="chapter-item expanded "><div>03: Webアプリケーションフレームワーク</div></li><li class="chapter-item expanded "><div>04: HTTP通信における状態管理 (1)</div></li><li class="chapter-item expanded "><div>05: HTTP通信における状態管理 (2)</div></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><div>06: タスクの登録・削除</div></li><li class="chapter-item expanded "><div>07: CSSによる装飾</div></li><li class="chapter-item expanded "><div>08: 検索機能</div></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html" class="active">01: 演習のための準備</a></li><li class="chapter-item expanded "><div>02: HTTP通信とルーティング</div></li><li class="chapter-item expanded "><div>03: Webアプリケーションフレームワーク</div></li><li class="chapter-item expanded "><div>04: HTTP通信における状態管理 (1)</div></li><li class="chapter-item expanded "><div>05: HTTP通信における状態管理 (2)</div></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><div>06: タスクの登録・削除</div></li><li class="chapter-item expanded "><div>07: CSSによる装飾</div></li><li class="chapter-item expanded "><div>08: 検索機能</div></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -143,55 +142,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="システム設計演習---webプログラミング--"><a class="header" href="#システム設計演習---webプログラミング--">システム設計演習 - Webプログラミング -</a></h1>
-<p>この資料は，情報工学系 システム設計演習 Webプログラミング の演習資料です．</p>
-<p>資料は全 10 回からなり，<b>練習問題に取り組む時間やレポートをまとめる時間を含めて本演習全体を構成</b>するものとします．
-前半 5 回は基礎編としてWebアプリケーションの動作原理やWebアプリケーションフレームワークの使い方などを主に扱います．
-後半 5 回は実践編としてWebアプリケーションフレームワークを使用した簡単なタスク管理アプリケーションの開発を扱います．
-演習内容にしたがって期末レポート課題を出題しますので，<b>各自のペースで計画的に進めてください</b>．</p>
-<p>練習問題が設定されている場合がありますが，必ずしも期末レポート課題に関連する内容ではなく，単に理解度を推し量るものを含みます．</p>
-<h2 id="開発環境など"><a class="header" href="#開発環境など">開発環境など</a></h2>
-<p>この演習では <a href="https://go.dev">Go言語</a> によるプログラム開発，<a href="https://docker.com">Docker</a> を用いた仮想環境上でのプログラム実行を想定しています．
-また，動作確認に Webブラウザ を使用します．
-情報工学系演習室の端末には関連ソフトウェアがすでにインストールされていますので，すぐに開発を始めることができます．</p>
-<p>個人所有PCなどで演習を行う場合，各自の端末に開発環境をセットアップしてもらう必要があります．
-OSやエディタなどについて特に指定はありませんので，各自の慣れ親しんだ環境で開発を進めてもらって構いません．
-Windows PC での開発を考えている方には， <a href="https://learn.microsoft.com/ja-jp/windows/wsl/install">WSL2</a> の使用を推奨します．</p>
-<p>プログラムの実行に必要な Docker は，以下を参考に各自でインストールをお願いします．
-この演習では基本的に Command Line Interface (CLI) での実行を想定しているため，ターミナルエミュレータ上で <code>docker-compose</code> コマンドが有効であることを確認してください．</p>
-<div class="table-wrapper"><table><thead><tr><th>OS</th><th>参考サイト</th></tr></thead><tbody>
-<tr><td>OS X</td><td><a href="https://brew.sh/index_ja">Homebrew</a> or <a href="https://docs.docker.jp/docker-for-mac/install.html">Docker Desktop for Mac</a></td></tr>
-<tr><td>Windows (+WSL)</td><td><a href="https://docs.docker.jp/desktop/windows/wsl.html">Docker Desktop w/ WSL2</a></td></tr>
-<tr><td>Ubuntu</td><td><a href="https://gihyo.jp/admin/serial/01/ubuntu-recipe/0719">DD4L on Ubuntu 22.04</a></td></tr>
-</tbody></table>
-</div>
-<p>表中に掲載のない環境を愛用している方は自力解決のできる方々だと思いますので，各自で環境整備をお願いします．</p>
-<p>基本的に Docker 上でのプログラム実行を想定しているため，Go言語のビルドツールはなくても大丈夫です．
-ただし，使用するテキストエディタなどによっては <code>go</code> コマンドが実行できることを要求してくる場合があるため，必要に応じてインストールしておくとよいかもしれません．
-インストール方法は <a href="https://go.dev/doc/install">Download and install - The Go programming language</a> を参照してください．</p>
-<p>Go言語の基本的な書き方や Docker によるプログラムの実行方法については，<a href="01_preliminary.html">01: 演習のための準備</a> にて扱います．</p>
-<h2 id="質問対応"><a class="header" href="#質問対応">質問対応</a></h2>
-<p>この注意事項は<a href="http://cs-sysdes.github.io/#slack-workspace">授業Webサイト</a>に記載したものと同じです．</p>
-<p>演習に関する質問は Slack にて随時受け付けますが，特に講義時間外については即レスを期待しないでください．
-質問者本人だけでなく他の人を助けることにも繋がることも多いため，可能な限り #help チャネルを活用してオープンな場で質問をしてもらえると良いかと思います．
-ただし，DM 等での質問や議論を妨げるものではありません．
-DM 等で直接受けた質問であっても，重要な質問であると判断した場合には，匿名で #help チャネルに質問の内容と回答を掲載する場合があります．</p>
-<p>質問時には，</p>
-<ol>
-<li>資料の<b>どの部分に取り組んでいる</b>のか．</li>
-<li>なにが<b>目的とする動作</b> (理想的な挙動 or 出てほしい結果) なのか．</li>
-<li>それを実現するために<b>なにをした</b>のか．</li>
-<li>実際には<b>どうなっている</b> のか． (出力やエラーの内容など)</li>
-</ol>
-<p>を明らかにしてくれると非常に助かります．
-一方で，質問の意図が掴みづらい場合にはこちらから掘り下げますので，気にしすぎず気楽に質問してください．</p>
-<h2 id="おことわり"><a class="header" href="#おことわり">おことわり</a></h2>
-<p>資料中に存在する誤り・不明瞭な説明は，すべて担当教員に責任があります．
-誤りを発見された場合は，適切に修正・訂正を行いますので，ご一報ください．
-また，不明瞭な点や改善すべき点などについても遠慮なくご報告いただければと思います．
-特にWebアプリケーション開発の経験がある学生がいれば，未経験の人がつまずきそうな箇所などを指摘してもらえると助かります．
-よりわかりやすい演習資料となるよう努力していきますので，ご協力のほどよろしくお願いいたします．</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="01-演習のための準備"><a class="header" href="#01-演習のための準備">01: 演習のための準備</a></h1>
+                        <h1 id="01-演習のための準備"><a class="header" href="#01-演習のための準備">01: 演習のための準備</a></h1>
 <p>第1回は，演習を進めるにあたって必要な以下の事項について説明します．</p>
 <ol>
 <li>Go言語プロジェクト</li>
@@ -837,12 +788,18 @@ Go言語 は慣れると割と書きやすい言語ですが，慣れるまで�
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
             </nav>
 
         </div>
@@ -857,12 +814,5 @@ Go言語 は慣れると割と書きやすい言語ですが，慣れるまで�
         <!-- Custom JS scripts -->
         <script type="text/javascript" src="theme/highlight-line-numbers.js"></script>
         <script type="text/javascript" src="theme/custom.js"></script>
-        <script type="text/javascript">
-        window.addEventListener('load', function() {
-            MathJax.Hub.Register.StartupHook('End', function() {
-                window.setTimeout(window.print, 100);
-            });
-        });
-        </script>
     </body>
 </html>

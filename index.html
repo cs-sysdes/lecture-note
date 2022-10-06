@@ -80,7 +80,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html" class="active">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><div>01: 演習のための準備</div></li><li class="chapter-item expanded "><div>02: HTTP通信とルーティング</div></li><li class="chapter-item expanded "><div>03: HTMLとformを用いたデータ送信</div></li><li class="chapter-item expanded "><div>04: HTTP通信における状態管理 (1)</div></li><li class="chapter-item expanded "><div>05: HTTP通信における状態管理 (2)</div></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><div>06: Webアプリケーションフレームワーク</div></li><li class="chapter-item expanded "><div>07: タスクの登録・削除</div></li><li class="chapter-item expanded "><div>08: CSSによる装飾</div></li><li class="chapter-item expanded "><div>09: 検索機能</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能</div></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html" class="active">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><div>02: HTTP通信とルーティング</div></li><li class="chapter-item expanded "><div>03: Webアプリケーションフレームワーク</div></li><li class="chapter-item expanded "><div>04: HTTP通信における状態管理 (1)</div></li><li class="chapter-item expanded "><div>05: HTTP通信における状態管理 (2)</div></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><div>06: タスクの登録・削除</div></li><li class="chapter-item expanded "><div>07: CSSによる装飾</div></li><li class="chapter-item expanded "><div>08: 検索機能</div></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -145,18 +145,19 @@
                         <h1 id="システム設計演習---webプログラミング--"><a class="header" href="#システム設計演習---webプログラミング--">システム設計演習 - Webプログラミング -</a></h1>
 <p>この資料は，情報工学系 システム設計演習 Webプログラミング の演習資料です．</p>
 <p>資料は全 10 回からなり，<b>練習問題に取り組む時間やレポートをまとめる時間を含めて本演習全体を構成</b>するものとします．
-前半 5 回は基礎編としてWebアプリケーションの動作原理などを主に扱います．
+前半 5 回は基礎編としてWebアプリケーションの動作原理やWebアプリケーションフレームワークの使い方などを主に扱います．
 後半 5 回は実践編としてWebアプリケーションフレームワークを使用した簡単なタスク管理アプリケーションの開発を扱います．
 演習内容にしたがって期末レポート課題を出題しますので，<b>各自のペースで計画的に進めてください</b>．</p>
 <p>練習問題が設定されている場合がありますが，必ずしも期末レポート課題に関連する内容ではなく，単に理解度を推し量るものを含みます．</p>
 <h2 id="開発環境など"><a class="header" href="#開発環境など">開発環境など</a></h2>
 <p>この演習では <a href="https://go.dev">Go言語</a> によるプログラム開発，<a href="https://docker.com">Docker</a> を用いた仮想環境上でのプログラム実行を想定しています．
+また，動作確認に Webブラウザ を使用します．
 情報工学系演習室の端末には関連ソフトウェアがすでにインストールされていますので，すぐに開発を始めることができます．</p>
 <p>個人所有PCなどで演習を行う場合，各自の端末に開発環境をセットアップしてもらう必要があります．
 OSやエディタなどについて特に指定はありませんので，各自の慣れ親しんだ環境で開発を進めてもらって構いません．
 Windows PC での開発を考えている方には， <a href="https://learn.microsoft.com/ja-jp/windows/wsl/install">WSL2</a> の使用を推奨します．</p>
 <p>プログラムの実行に必要な Docker は，以下を参考に各自でインストールをお願いします．
-<code>docker-compose</code>  コマンドが有効であることを確認してください．</p>
+この演習では基本的に Command Line Interface (CLI) での実行を想定しているため，ターミナルエミュレータ上で <code>docker-compose</code> コマンドが有効であることを確認してください．</p>
 <div class="table-wrapper"><table><thead><tr><th>OS</th><th>参考サイト</th></tr></thead><tbody>
 <tr><td>OS X</td><td><a href="https://brew.sh/index_ja">Homebrew</a> or <a href="https://docs.docker.jp/docker-for-mac/install.html">Docker Desktop for Mac</a></td></tr>
 <tr><td>Windows (+WSL)</td><td><a href="https://docs.docker.jp/desktop/windows/wsl.html">Docker Desktop w/ WSL2</a></td></tr>
@@ -194,12 +195,18 @@ DM 等で直接受けた質問であっても，重要な質問であると判�
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="next" href="01_preliminary.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         <div style="clear: both"></div>
                     </nav>
                 </div>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="next" href="01_preliminary.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
             </nav>
 
         </div>
