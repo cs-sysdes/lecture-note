@@ -27,7 +27,6 @@ GitHub の扱いに慣れている方は直接 clone してもらって構いま
 
 ![How to download](img/download.png)
 
-<!-- ### プロジェクトの構成 -->
 今回使用する tutorial.go は，以下のファイル群で構成されています．
 - README.md
 - Dockerfile
