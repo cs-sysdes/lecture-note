@@ -1,0 +1,522 @@
+<!DOCTYPE HTML>
+<html lang="ja" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>02: HTTP通信とルーティング - CSC.T364 Workshop on System Design -  Web programming</title>
+        <!-- Custom HTML head -->
+<meta name="robots" content="noindex,nofollow,noarchive"/>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="Lecture note for Web programming course 2022 in CSC.T364 Workshop on System Design">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/highlight-line-numbers.css">
+        <link rel="stylesheet" href="theme/custom.css">
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><a href="02_http_and_routing.html" class="active">02: HTTP通信とルーティング</a></li><li class="chapter-item expanded "><div>03: Webアプリケーションフレームワーク</div></li><li class="chapter-item expanded "><div>04: HTTP通信における状態管理 (1)</div></li><li class="chapter-item expanded "><div>05: HTTP通信における状態管理 (2)</div></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><div>06: タスクの登録・削除</div></li><li class="chapter-item expanded "><div>07: CSSによる装飾</div></li><li class="chapter-item expanded "><div>08: 検索機能</div></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">CSC.T364 Workshop on System Design -  Web programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/cs-sysdes/lecture-note" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="http通信とルーティング"><a class="header" href="#http通信とルーティング">HTTP通信とルーティング</a></h1>
+<p>今回から本格的にWebアプリケーションを構築するための基礎技術に触れていきます．</p>
+<p>第2回は，特に以下の内容について扱います．</p>
+<ol>
+<li>Webアプリケーションの基本的な動作</li>
+<li>Web通信の決まりごと (Hypertext Transfer Protocol; HTTP)</li>
+<li>アクセス先の制御 (ルーティング)</li>
+</ol>
+<p>また今回の資料は，前回配布したプロジェクトとは異なる新たなプロジェクトをベースとして演習を進めます．
+以下のリンクより新しいプロジェクト httpserver.go をダウンロードし，演習が進められるよう展開・配置してください．</p>
+<p><a href="https://github.com/cs-sysdes/httpserver.go">https://github.com/cs-sysdes/httpserver.go</a></p>
+<p>ダウンロード方法は <a href="01_preliminary.html">前回の資料</a> を参照してください．</p>
+<h2 id="webアプリケーションの基本的な動作"><a class="header" href="#webアプリケーションの基本的な動作">Webアプリケーションの基本的な動作</a></h2>
+<p><b>Web技術</b>を基盤としたアプリケーションを総称して「Webアプリケーション」と呼びます．
+Webアプリケーションは，一般に <b>Client-Server model</b> と呼ばれるアプリケーション形態をとり，Client側アプリケーション (Client-side application) と Server側アプリケーション (Server-side application) という2つのアプリケーションによって構成されます．
+基本動作として <b>Client からの要求 (リクエスト)</b>に対して <b>Server が応答 (レスポンス)</b>を返す形式で目的の処理を実行します．</p>
+<p><img src="img/webapp_flow.png" alt="Client-Server model" /></p>
+<p>Client-side アプリケーションには <b>Webブラウザ</b> を採用する場合が多いですが，場合によって専用のアプリケーションを提供する場合もあります．
+たとえば，Twitter社は自社のサービスとして Webブラウザ上で Tweet を閲覧可能な Twitter Web App を提供していますが，スマホ用にネイティブアプリケーションとして Twitter for Android や Twitter for iPhone などを提供しています．
+また，サードパーティ製アプリケーションまで含めると，PC用あるいはタブレット用アプリケーションなど，さまざまなものが提供されています．
+本演習では Client-side アプリケーションには Webブラウザ を採用するため，各自で Client-side アプリケーションを構築してもらう必要はありません．</p>
+<p>Server-side アプリケーションは Client-side アプリケーションからのリクエストをもとに，必要に応じて内部状態の更新などを行い，Client-side アプリケーションにレスポンスを返します．
+アプリケーションの目的に応じてデータベースや認証システムなど，他の外部サービスと連携して処理を行う場合もあります．
+本演習で主に扱うのは，こちらの Server-side アプリケーションになります．</p>
+<h3 id="server-side-アプリケーションの実行"><a class="header" href="#server-side-アプリケーションの実行">Server-side アプリケーションの実行</a></h3>
+<p><a href="https://github.com/cs-sysdes/httpserver.go">今回配布するプロジェクト</a>は，Server-side アプリケーションとして最低限の通信機能と動作ログを標準出力へ書き出す機能のみをもつプログラムになります．
+本ページの以降の説明では，このプログラムを編集し，Webアプリケーションの動作について学びます．</p>
+<p>前回と同様に <code>~/sysdes/httpserver.go</code> にダウンロードしたプロジェクトが展開されていると仮定します．
+このパスは各自の環境で置き換えてください．</p>
+<p>ターミナルエミュレータを起動し，Dockerコンテナを起動します．</p>
+<pre><code class="language-sh">$ cd ~/sysdes/httpserver.go
+$ docker-compose up -d
+</code></pre>
+<p>プログラムを起動し，2行目ようなログが表示されることを確認してください．</p>
+<pre><code class="language-sh">$ docker-compose exec app go run main.go
+2022/10/08 03:30:00 Listen:  [::]:8000
+</code></pre>
+<p>冒頭のタイムスタンプや <code>[::]</code> の部分は実行タイミングや環境によって異なる場合があります．</p>
+<p>このプログラムは Server-side アプリケーションなので，起動すると Client-side アプリケーションからの接続を待機します．
+したがって，なにか処理をさせるためには，Client-side アプリケーションからリクエストを送信する必要があります．
+先ほど述べた通り，本演習では Client-side アプリケーションとしてWebブラウザを使用することとしているので，ChromeなどのWebブラウザからリクエストを送信してみましょう．</p>
+<p>Webブラウザを開き，URL欄に <code>localhost:8000</code> あるいは <code>127.0.0.1:8000</code> と打ち込んでエンターを押してみましょう．
+プログラム側のログは以下のような状態となるはずです．</p>
+<pre><code class="language-sh">$ docker-compose exec app go run main.go
+2022/10/08 03:30:00 Listen:  [::]:8000
+2022/10/08 03:35:31 Connected by  172.19.0.1.41888
+2022/10/08 03:35:31 Connected by  172.19.0.1.41892
+2022/10/08 03:35:32 Connected by  172.19.0.1.41896
+</code></pre>
+<p>先ほどと同様に，冒頭のタイムスタンプや <code>172.19.0.1:41888</code> の部分，出力されるログの数は実行タイミングや環境によって異なります．</p>
+<p>これらのログは，Client-side アプリケーションからのリクエストを受信したことを意味します．
+この例のように，1 度しかアクセスしていないのに複数のログが出る場合がありますが，使用するWebブラウザによってこの辺の挙動は変わりますので，いまはあまり気にしなくて良いです．</p>
+<p>プログラムの方ではリクエストを受け取ったことをログから確認できました．
+一方で，Webブラウザの方はどうなっているでしょうか．</p>
+<p>おそらく，通常の動作だと「ページが動作していない」などのエラーが表示されていると思います．
+たとえば，教員の端末では以下のような表示になっています．</p>
+<p><img src="img/invalid_response.png" alt="Error page" /></p>
+<p>現段階では，<b>これは正常な動作結果</b>ですので，安心してください．</p>
+<p>このエラー画面に代えて，Webブラウザ上に ”Hello world&quot; と表示することを次の目標とします．</p>
+<h3 id="server-side-アプリケーションの停止"><a class="header" href="#server-side-アプリケーションの停止">Server-side アプリケーションの停止</a></h3>
+<p>具体的なプログラムの開発に移る前に，プログラムの停止方法を説明します．</p>
+<p>今回以降において実行する Server-side アプリケーションは，基本的に Client-side からのリクエストを待ち受け，リクエストに対してレスポンスを返す動作を繰り返し行うプログラムになります．
+したがって，初期状態では停止する方法を実装していません．
+停止できなければプログラムを変更して再起動することもできないので，どうにかして停止する必要があります．</p>
+<p>停止方法は簡単で，ターミナルエミュレータ上で強制停止シグナルを送信することでプログラムを強制的に落とします．
+強制停止シグナルを送信するには，プログラムを実行しているターミナルエミュレータ上で，<code>Ctrl-c</code> を入力します．
+すなわち，キーボード上の <code>Ctrl</code> ボタンとアルファベットの <code>c</code> を同時押しすることで，プログラムを停止することができます．</p>
+<h3 id="httpservergomaingo-概観"><a class="header" href="#httpservergomaingo-概観">httpserver.go/main.go 概観</a></h3>
+<p>ここで，どうやらうまく動いていないらしいプログラムの中身を簡単に解説します．
+スクロールしながら資料を追うのは難しいと思うので，各自の手元で main.go を開きながら進めると良いかと思います．</p>
+<p>main.go には以下のように Server-side アプリケーションが実装されています．</p>
+<p><span class="filename">httpserver.go/main.go</span></p>
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;log&quot;
+	&quot;net&quot; // standard network package
+)
+
+func main() {
+	// config
+	port := 8000
+	protocol := &quot;tcp&quot;
+
+	// resolve TCP address
+	addr, err := net.ResolveTCPAddr(protocol, fmt.Sprintf(&quot;:%d&quot;, port))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// get TCP socket
+	socket, err := net.ListenTCP(protocol, addr)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println(&quot;Listen: &quot;, socket.Addr().String())
+
+	// keep listening
+	for {
+		// wait for connection
+		conn, err := socket.Accept()
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		log.Println(&quot;Connected by &quot;, conn.RemoteAddr().String())
+
+		// yield connection to concurrent process
+		go handleConnection(conn)
+	}
+}
+
+func handleConnection(conn net.Conn) {
+	// close connection when this function ends
+	defer conn.Close()
+
+	// write response
+	conn.Write([]byte(&quot;Hello world.&quot;))
+}
+</code></pre>
+<p><a href="01_preliminary.html">前回</a>触れなかった機能として，3--7行目のように，Go言語の import 文は変数宣言などと同じように複数のパッケージを丸括弧でグループ化して一括で宣言することができます．</p>
+<p>9--40行目の <code>main</code> 関数では，Web通信用にソケットを開き (15, 21行目)，外部からの接続を待機しています (28--39行目)．</p>
+<p>このプログラムでは，30行目で受け取った外部からの接続 <code>conn</code> を，38行目で <code>handleConnection</code> に渡し，具体的なリクエストおよびレスポンスの処理は <code>handleConnection</code> 関数内で行うよう設計しています．
+したがって，これから <code>handleConnection</code> 関数を適切に実装することで，正しく応答する Server-side アプリケーションを開発していきます．</p>
+<p>プログラム全体を見渡してみると，以下のような頻出する表現があることに気付きます．</p>
+<pre><code class="language-go">if err != nil {
+    ...  // 何かしらの処理
+}
+</code></pre>
+<p>これは Go言語 を書く上でおそらく一番よく使うであろう<b>エラーハンドリング</b>を行う記述パターンになります．</p>
+<p>たとえば15行目では，与えられたポート番号 (<code>port := 8000</code>) から通信ソケットのアドレスを取得していますが，与えられた文字列が正しいフォーマットではない場合などに，<code>net.ResolveTCPAddr</code> 関数はエラーになります．
+Go言語には Java の try-catch のような言語機能がないため，エラーの有無は一般に関数の戻り値として通知されます．
+エラーが発生した場合，<code>net.ResolveTCPAddr</code> 関数は第2戻り値としてエラーを伝達するため，第2戻り値を受ける <code>err</code> が <code>nil</code> ではないとき，それはエラーが発生していることを示します．</p>
+<p><span class="filename">httpserver.go/main.go (15--18行目 抜粋)</span></p>
+<pre><code class="language-go">addr, err := net.ResolveTCPAddr(protocol, fmt.Sprintf(&quot;:%d&quot;, port))   // ここでエラーが発生した場合
+if err != nil {                                                       // ここで err != nil となり
+    ...                                                               // ここに記述された処理が実行される
+}
+</code></pre>
+<p>このように，Go言語では処理が失敗する可能性がある関数はエラーの有無を表す <code>error</code> 型の戻り値を返すのが一般的です．
+<code>error</code> 型の戻り値は，エラーがない，すなわち関数の処理が正常に終了した場合には <code>nil</code> になります．
+そうでない場合，すなわち，関数の処理に失敗した場合には，エラー情報を含む <code>error</code> 型の値になります．
+したがって，<code>error</code> 型の戻り値の <code>nil</code> 判定を行って，エラーの有無を調べるのが一種の記述パターンになっています．</p>
+<p>ところで，<a href="01_preliminary.html">前回</a>の資料中で，通常 <code>:=</code> による変数定義は複数回できないが例外もあるという話をしたかと思います．
+今回の <code>err</code> の定義がその例外で，たとえば <code>main</code> 関数の中では，15行目と21行目に同じスコープ内で複数回 <code>err</code> を定義しているように見えます．
+これについては，この書き方を許容しないと <code>err</code> のように使い回される可能性がある変数を最初に <code>var err error</code> などと定義しなくてはならず不便なので，例外として許されています．
+注意すべきは，<code>err</code> の他に別の新たな変数も同時に定義されているという点で，Go言語 ではこの場合に限り複数回同じ変数を定義しても良いということになっています．
+つまり，以下のコードは <code>err</code> 以外に新たな変数が定義されていないので，コンパイルエラーになります．</p>
+<pre><code class="language-go">func f() {
+    err := ThisCanReturnError()
+    err := ThisCanAlsoReturnError()
+}
+</code></pre>
+<p>こういうケースでは，以下のように局所スコープを利用すると良いでしょう．</p>
+<pre><code class="language-go">if err := ThisCanReturnError(); err != nil {
+    ...
+}
+</code></pre>
+<p>少し話が逸れましたが，最後に38行目の <code>handleConnection</code> 関数を呼び出す記述について見てみます．
+この行では関数呼び出しとして通常通り <code>handleConnection(conn)</code> とは書かずに，冒頭に <code>go</code> キーワードを付与して <code>go handleConnection(conn)</code> として関数呼び出しを行っています．
+この記述は Go言語 特有のもので，<code>handleConnection</code> 関数を goroutine という機能を使用して<b>並行実行</b>するための記述法です．
+すなわち，<code>handleConnection</code> 関数は <code>main</code> 関数の実行とは独立して並行的に処理され，<code>main</code> 関数は <code>handleConnection</code> 関数の結果を待たずに次の処理へとプログラムの実行を進めます．
+したがって，<code>handleConnection</code> 関数の実行によって <code>main</code> 関数の実行が妨げられることが (普通は) ないので，<code>main</code> 関数は次々と外部からの接続受けて <code>handleConnection</code> へ渡すといった動作を絶え間なく行うことができます．</p>
+<div class="memo">
+Go言語 は並行処理を記述しやすいよう設計されたプログラミング言語であり，C言語であれば <code class="hljs">fork</code> を用いたり，Java であれば <code class="hljs">Thread</code> を使って書かなくてはいけないプログラムの並行実行を，<code class="hljs go">go</code> キーワードを付与した関数呼び出しという形で簡単に実行できるようになっています．
+goroutine は面白い機能ですが，この演習において理解すべき言語機能というわけではないですし，かなり奥深い内容になってしまうため，詳細な説明は省略します．
+</div>
+<p>44行目の <code>defer</code> キーワードも Go言語 の面白い機能の一つで，<code>defer</code> キーワードを付けて記述された関数呼び出しは，スコープを抜ける際に実行されるようになります．
+要するに関数呼び出しの予約機能みたいなものです．
+<code>conn</code> 変数は外部との接続を表す変数であり，Java でファイル操作を行った時と同様に，使い終わったら <code>Close</code> してやる必要があります．
+関数の最後に <code>conn.Close()</code> と記述しても同じことですが，できれば変数宣言の近くに <code>Close</code> 指定がある方がプログラムの見通しが良いため，<code>defer</code> を使って事前予約すると良いでしょう．</p>
+<p>Go言語 の機能に関する説明もしたため長くなりましたが，このプログラムの一番重要な部分として，47行目において <code>conn</code> にバイト列を書き込んでいるのが確認できます．
+ここも Java でファイル操作を行った時と同様に，<code>Write</code> 関数によって接続元，すなわち Client-side アプリケーションにバイト列で応答を返すことができます．
+ただし，さきほど動かしてみてわかった通り，Webブラウザには &quot;Hello world.&quot; などとは表示されませんでした．
+この原理について以降で説明していきます．</p>
+<h2 id="web通信の決まりごと-hypertext-transfer-protocol-http"><a class="header" href="#web通信の決まりごと-hypertext-transfer-protocol-http">Web通信の決まりごと (Hypertext Transfer Protocol; HTTP)</a></h2>
+<p>Webアプリケーションは Client-side アプリケーションからの <b>リクエスト (Request)</b> に対し，Server-side アプリケーションが <b>レスポンス (Response)</b> を返す形で成り立っています．
+このとき，リクエストおよびレスポンスにはそれぞれ決められた形式 (フォーマット) が存在し，こうした形式などを定めた<b>Web通信における約束事 (プロトコル)</b> を <b>Hypertext Transfer Protocol (HTTP)</b> と呼びます．
+HTTP は TCP (Transmission Control Protocol) 上で定められたプロトコルであり，TCP/IPモデルでは第4層「アプリケーション層」，OSI参照モデルでは第7層「アプリケーション層」に位置します．</p>
+<p>HTTP は本来 HTML や XML といったWeb通信においてやり取りされる Hypertext と呼ばれるデータ形式を扱うためのプロトコルです．
+しかしながら，現実的には画像データや音声データ，映像データなど，Web上で利用される様々な形式のデータ送受信に使用されています．</p>
+<p>HTTP は通信技術の向上とともに新たなバージョンがいくつか出されています．
+代表的なものとして HTTP/1.1，HTTP/2 などがあり，最近では HTTP/3 が正式に標準化されました (2022年6月6日)．
+長きにわたって HTTP/1.1 が最も使用率の高いプロトコルでしたが，近年 HTTP2 の使用率が 50% を超えたらしいです (2021年1月)．</p>
+<div class="memo">
+一般にネットワーク上を流れるデータはすべて<b>バイト列</b>として表現されるため，Web通信におけるリクエストもレスポンスもデータとしては単なるバイト列として扱われます．
+通信されるデータが単なるバイト列なので，さまざまなアプリケーションが好き勝手な形式でリクエストを送ったり，あるいはレスポンスを返したりしてしまうと，アプリケーション開発者としては非常に困ったことになります．
+特にWebブラウザのような汎用アプリケーションでは，さまざまな Server-side アプリケーションがそれぞれ独自の形式でレスポンスを返してくるとなると，サービスごとのレスポンス形式を個別に知っておく必要があり，これは相当面倒です．
+予めデータのフォーマットを定めておき，それに従わないデータは無視して良いということにすると，なにかと便利なわけです．
+<p>よくWebサイトなどのURLの先頭についている <code>http:</code> というのは，HTTPに従った通信であることを明示するものです．
+最近では <code>https:</code> とする方が一般的となっていますが，これは HTTP Secure と呼ばれる暗号化された通信経路上で HTTP 通信を行うより安全なプロトコルを表すものです．</p>
+</div>
+<p>HTTP では，リクエストおよびレスポンスそれぞれについて特定の形式に則って通信を行うよう定めています．
+それぞれを一般に <b>HTTPリクエスト</b> および <b>HTTPレスポンス</b> と呼びます．
+配布したプログラムがうまく動かなかったのは，どうやらこの辺が原因ではないかと推測できます．</p>
+<h3 id="httpリクエスト"><a class="header" href="#httpリクエスト">HTTPリクエスト</a></h3>
+<p>HTTPリクエストは，Client-side アプリケーションから Server-side アプリケーションへ送信するリクエストの形式を定めます．
+通常は Webブラウザ などが自動的に生成するため，自分で記述する必要はありません．
+ただし，専用の Client-side アプリケーションを開発し使用する場合には，サーバへの通信がこの形式に従うよう自身で実装する必要がある場合もあります．</p>
+<p>代表的なHTTPリクエストの例を示します．</p>
+<pre><code class="language-txt">GET /index.html HTTP/1.1
+HOST: 127.0.0.1
+Connection: keep-alive
+
+</code></pre>
+<pre><code class="language-txt">POST /login HTTP/1.1
+`&lt;METHOD&gt;`，`&lt;PATH&gt;`，`&lt;VERSION&gt;` はスペース区切りで識別されます．
+したがって，それぞれの項目はスペースを含まない文字列になります．
+HOST: 127.0.0.1
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: keep-alive
+Content: multipart/form-data
+Content-Length: 38
+
+user=titech&amp;passwd=extremelysafepasswd
+</code></pre>
+<p>これらの形式を統一的に記述すると以下のようになります．</p>
+<pre><code class="language-txt">&lt;METHOD&gt; &lt;PATH&gt; &lt;VERSION&gt;
+&lt;HTTP_HEADERS&gt;
+
+&lt;BODY&gt;
+</code></pre>
+<p>1行目の <code>&lt;METHOD&gt; &lt;PATH&gt; &lt;VERSION&gt;</code> は，<b>リクエストの種類</b>，<b>リクエスト先</b>，および使用する <b>HTTPのバージョン</b> を指定します．
+<code>&lt;METHOD&gt;</code> の部分は特に <b>リクエストメソッド</b> と呼ばれ，GET や POST の他に，PUT，DELETE，UPDATE などいくつかの種類が定義されています．
+<code>&lt;PATH&gt;</code> の部分はリクエストを送信する対象であるリソースを指定します．
+<code>&lt;VERSION&gt;</code> 部分は主に HTTP/1.1 あるいは HTTP/2 である場合が多く，バージョンによって使用できる機能に若干の違いがあるため，ここの指定によって特定の機能が有効か無効かを確認します．
+<code>&lt;METHOD&gt;</code>，<code>&lt;PATH&gt;</code>，<code>&lt;VERSION&gt;</code> はスペース区切りで識別されます．
+したがって，それぞれの項目はスペースを含まない文字列になります．</p>
+<p>2行目の <code>&lt;HTTP_HEADERS&gt;</code> はHTTP/1.1以降で有効になった機能であり，サーバ側へリクエストに関するメタ情報を送る役割を持ちます．
+形式として，1行に1つの「key」と「value」のペアを記述でき，<code>&lt;key&gt;: &lt;value&gt;</code> のようにコロン区切りで記述します．
+ここは複数行にわたってメタ情報を載せることができ，以下の通り役割によって分類されたいくつかのヘッダ情報を組合せて記述されることが多くなっています．</p>
+<ul>
+<li>Request headers
+<ul>
+<li>リクエストに直接関わる情報</li>
+<li>HOST や User-Agent といった key が該当する</li>
+</ul>
+</li>
+<li>General headers
+<ul>
+<li>通信設定などの情報</li>
+</ul>
+</li>
+<li>Representation headers
+<ul>
+<li><code>&lt;BODY&gt;</code> の形式などに関わる情報</li>
+</ul>
+</li>
+</ul>
+<p><code>&lt;HTTP_HEADERS&gt;</code> と <code>&lt;BODY&gt;</code> の間の空行は必須です．
+この空行が存在することで，リクエスト中のどこからが <code>&lt;BODY&gt;</code> であるかを判断します．</p>
+<p><code>&lt;BODY&gt;</code> はリクエストとしてサーバへ送信される情報そのものを載せる区画になります．
+リクエストメソッドが GET である場合には一般に <code>&lt;BODY&gt;</code> は空，すなわちなにも記述されずに送られることが多いですが，もちろん GET リクエストにも <code>&lt;BODY&gt;</code> を載せることはできます．
+また，<code>&lt;BODY&gt;</code> の長さ (バイト長) がわからなければ Server-side アプリケーションでどこまで読むべきかを判定できない場合があるため，<code>&lt;REQUEST_HEADERS&gt;</code> 上に <code>Content-Length</code> を key とする長さ情報を付与して送るのが一般的です．</p>
+<div class="memo">
+<code class="hljs">Content-Length</code> に設定される値は <code class="hljs">&lt;BODY&gt;</code> の<b>byte長</b>であり<b>見かけの文字数とは必ずしも一致しない</b>ことに注意が必要です．
+特に日本語などのマルチバイト文字を扱う場合，1文字を複数バイトで表現するため，見かけの文字数とbyte長は一般に一致しません．
+</div>
+<h5 id="練習問題-2-1"><a class="header" href="#練習問題-2-1">練習問題 2-1</a></h5>
+<p>実際にWebブラウザから送られてくるHTTPリクエストを観察してみましょう．</p>
+<p>httpserver.go/main.go 内の <code>handleConnection</code> 関数を以下のように編集した上で，プログラムを実行してください．
+Webブラウザからのアクセスに対してどのようなログが表示されるか観察し，Webブラウザがたしかに形式的に正しいHTTPリクエストを送信していることを確かめてください．</p>
+<pre><code class="language-go">func handleConnection(conn net.Conn) {
+    // close connection when this function ends
+    defer conn.Close()
+
+    buf := make([]byte, 1024)
+    conn.Read(buf)
+
+    log.Printf(&quot;Request\n----------\n%s\n----------&quot;, string(buf))
+
+    // write response
+    conn.Write([]byte(&quot;Hello world.&quot;))
+}
+</code></pre>
+<p>このプログラムは，<code>buf := make([]byte, 1024)</code> にてリクエストを読み込むための領域を1024バイト分だけ確保し，<code>conn.Read(buf)</code> によってリクエスト全体を <code>buf</code> へ読み込んでいます．
+<code>net.Conn.Read</code> メソッドは本来戻り値として読み込んだ byte 長とエラー情報を返しますが，ここでは特に使用しないため無視しています．
+<code>log.Printf</code> 関数によってリクエストの内容を整形してログとして出力しますが，<code>buf</code> は <code>[]byte</code> 型の変数であるため <code>string(buf)</code> として文字列へ変換して渡しています．
+なお，今回の例ではおそらく1024バイトもあれば足りるであろうと考えて読み込み処理について少し手を抜いていますが，本来はより長いリクエストにも対応できるよう工夫する必要があります．</p>
+<h3 id="httpレスポンス"><a class="header" href="#httpレスポンス">HTTPレスポンス</a></h3>
+<p>HTTPレスポンスは，Server-side アプリケーションから Client-side アプリケーションへ送信するレスポンスの形式を定めます．
+ここまで来たらお気づきだと思いますが，配布したプログラムはHTTPレスポンスとして定められた形式に従った応答を返していないため，Webブラウザ上にて何も表示されない状態となっています．</p>
+<p>HTTPレスポンスは以下の形式をとります．</p>
+<pre><code class="language-txt">&lt;VERSION&gt; &lt;STATUS_CODE&gt; &lt;REASON_PHRASE&gt;
+&lt;HTTP_HEADERS&gt;
+
+&lt;BODY&gt;
+</code></pre>
+<p>1行目の <code>&lt;VERSION&gt; &lt;STATUS_CODE&gt; &lt;REASON_PHRASE&gt;</code> は <b>Status line</b> と呼ばれ，リクエストに対する処理の状態 (処理の成功・失敗など) を Client-side アプリケーションへ通知します．
+<code>&lt;VERSION&gt;</code> はHTTPリクエストと同様に使用するプロトコルのバージョンを宣言します．
+<code>&lt;STATUS_CODE&gt;</code> および <code>&lt;REASON_PHRASE&gt;</code> には，リクエスト処理の状態に応じて予め定義された数値と文字列のペアを書き込みます．
+よく見かける例としては，<code>200 OK</code> や <code>404 Not Found</code> などが挙げられます．
+HTTPリクエストの1行目と同様に，<code>&lt;VERSION&gt;</code>，<code>&lt;STATUS_CODE&gt;</code>，<code>&lt;REASON_PHRASE&gt;</code> はスペース区切りで識別され，<code>&lt;VERSION&gt;</code> はスペースを含まない文字列，<code>&lt;STATUS_CODE&gt;</code> は3桁の整数値で定義されます．
+<code>&lt;REASON_PHRASE&gt;</code> については，末尾であり解釈時に曖昧性をもたないため，空白を含むことを許容した文字列とされています．
+有効な <code>&lt;STATUS_CODE&gt;</code> と <code>&lt;REASON_PHRASE&gt;</code> の組合せについては，<a href="https://datatracker.ietf.org/doc/html/rfc7231#section-6.1">RFC7231</a> に定義されています．</p>
+<p><code>&lt;HTTP_HEADRS&gt;</code> および <code>&lt;BODY&gt;</code> については，HTTPリクエストと同様です．
+また，HTTPリクエストと同様に <code>&lt;HTTP_HEADERS&gt;</code> と <code>&lt;BODY&gt;</code> の間の空行は必須です．
+Webブラウザでは一般に <code>&lt;BODY&gt;</code> の部分が画面上に表示されます．</p>
+<p>HTTPリクエストの形式がわかったところで，配布したプログラムを修正してWebブラウザ上に &quot;Hello world.&quot; を表示できるようにしてみましょう．
+この項目は以下の通り練習問題とします．</p>
+<h5 id="練習問題-2-2"><a class="header" href="#練習問題-2-2">練習問題 2-2</a></h5>
+<p>配布したプロジェクト httpserver.go について，適切なHTTPレスポンスを返すようプログラムを修正し，Webブラウザ上に &quot;Hello world.&quot; の文字列を表示できるようにします．
+なお，この練習問題は以下のヒントを参考に各自で解いてみましょう．</p>
+<ul>
+<li>HTTPレスポンスは <code>net.Conn.Write</code> メソッドを使用することで，バイト列として Client-side アプリケーションへ書き出すことができる．具体的には，配布プログラム中の <code>handleConnection</code> 関数内に記述された <code>conn.Write</code> のメソッド呼び出しを真似すると良い．</li>
+<li>HTTPレスポンスの <code>&lt;HTTP_HEADERS&gt;</code> として <code>&lt;BODY&gt;</code> の長さを指定すること．このとき Go言語 において，<code>[]byte</code> 型の長さ (byte長) は Python と同様に組み込み関数 <code>len</code> によって取得できる．</li>
+</ul>
+<h2 id="アクセス先の制御-ルーティング"><a class="header" href="#アクセス先の制御-ルーティング">アクセス先の制御 (ルーティング)</a></h2>
+<p>多くのWebアプリケーションは，HTTPリクエストの内容に応じて様々な処理を行います．
+こうしたリクエストの内容に応じた処理の分岐を一般に <b>ルーティング (Routing)</b> と呼びます．</p>
+<p>ルーティングはWebアプリケーションの使いやすさに影響を与えるのはもちろんとして，開発にも影響を及ぼします．
+適切なルーティングが為されていない場合，アプリケーションが実行すべき処理の流れが追いづらく，使う側および作る側の双方にとって嬉しくない状態となってしまいます．</p>
+<p>通常のルーティングでは，HTTPリクエストの持つアクセスメソッド <code>&lt;METHOD&gt;</code> とアクセスパス <code>&lt;PATH&gt;</code> の組合せに基づいて処理を分岐します．
+すなわち，たとえば <code>/</code> に対する GETリクエスト と <code>/</code> に対する POSTリクエストとでは別の処理を実行するなど，同じパスでもメソッドの違いによって処理を変えることが可能です．</p>
+<p>ルーティングについては，単純にHTTPリクエスト中の <code>&lt;METHOD&gt;</code> と <code>&lt;PATH&gt;</code> を確認し，<b>条件分岐</b>によって処理を変えているだけと考えることができます．
+したがって，ここでは実際に以下の練習問題に取り組んでもらい，ルーティングの理解を深めるとともに Go言語 により一層慣れるための機会にしてもらえればと思います．</p>
+<h5 id="練習問題-2-3"><a class="header" href="#練習問題-2-3">練習問題 2-3</a></h5>
+<p>以下の仕様を満たすようルーティングを実装し，動作確認をしてください．
+なお，現在までの内容ではWebブラウザから送信されるリクエストのメソッドは基本的に GET になってしまうため，ここではメソッドの違いによるルーティングは考慮しなくてよいものとします．</p>
+<ul>
+<li>Webブラウザから <code>localhost:8000/hello</code> にアクセスした場合，&quot;Hello world.&quot; が画面に表示される．</li>
+<li>Webブラウザから <code>localhost:8000/bye</code> にアクセスした場合，&quot;Good bye.&quot; が画面に表示される．</li>
+<li>Webブラウザから <code>localhost:8000/hello.jp</code> にアクセスした場合，日本語で &quot;こんにちは&quot; と表示される．</li>
+<li>Webブラウザから上記以外のリソースにアクセスした場合，ページが見つからない旨を Client-side に通知する．</li>
+</ul>
+<p>なお，この練習問題も以下のヒントをもとに各自で解いてみましょう．</p>
+<ul>
+<li>文字列の分割は <code>strings</code> パッケージ内の <code>strings.Split</code> 関数にて行うことができる．この関数は，第1引数として文字列，第2引数として区切り文字を受け取り，文字列のスライスを返す．</li>
+<li>アクセス先のパス (<code>/hello</code> など) は，HTTPリクエストの1行目に記述されている．</li>
+<li>Go言語 での条件分岐には，<code>if</code> または <code>switch</code> を使用する．</li>
+</ul>
+<div class="memo">
+今後演習を進めていくにあたり，標準ライブラリやサードパーティライブラリにどのような関数・構造体・メソッドが定義されているかを調べる必要が出てくるかと思います．
+Go言語 では便利なことに，だいたいのパッケージを網羅したWebサイトが存在し，関数の定義や場合によってはサンプルコードなどを調べることができます．<br>
+<a href="https://pkg.go.dev">Go言語パッケージドキュメントサイト</a>
+</div>
+<h2 id="まとめ"><a class="header" href="#まとめ">まとめ</a></h2>
+<p>今回はWebアプリケーションを支えるWeb通信の仕組みについて扱いました．
+配布したプログラムは最低限の機能しか持たないため，これをベースとしてWebアプリケーションを構築するのはかなり難しいと感じたかもしれません．</p>
+<p>次回は，Webアプリケーション開発をより簡単にする仕組みについて触れます．
+また，Client-side アプリケーションから Server-side アプリケーションへ情報を送信する方法について扱い，より実用的なアプリケーションを開発できる体制を整えていきます．</p>
+<p>今回の内容は以上になります．
+お疲れさまでした．</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="01_preliminary.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="01_preliminary.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="theme/highlight-line-numbers.js"></script>
+        <script type="text/javascript" src="theme/custom.js"></script>
+    </body>
+</html>
