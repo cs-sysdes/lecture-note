@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><a href="02_http_and_routing.html">02: HTTP通信とルーティング</a></li><li class="chapter-item expanded "><div>03: Webアプリケーションフレームワーク</div></li><li class="chapter-item expanded "><div>04: HTTP通信における状態管理 (1)</div></li><li class="chapter-item expanded "><div>05: HTTP通信における状態管理 (2)</div></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><div>06: タスクの登録・削除</div></li><li class="chapter-item expanded "><div>07: CSSによる装飾</div></li><li class="chapter-item expanded "><div>08: 検索機能</div></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><a href="02_http_and_routing.html">02: HTTP通信とルーティング</a></li><li class="chapter-item expanded "><a href="03_web_application_framework.html">03: Webアプリケーションフレームワーク</a></li><li class="chapter-item expanded "><div>04: HTTP通信における状態管理 (1)</div></li><li class="chapter-item expanded "><div>05: HTTP通信における状態管理 (2)</div></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><div>06: タスクの登録・削除</div></li><li class="chapter-item expanded "><div>07: CSSによる装飾</div></li><li class="chapter-item expanded "><div>08: 検索機能</div></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -297,7 +297,7 @@ Hello world!
 <p>演習で使用するGo言語について簡単に勉強しましょう．</p>
 <p>tutorial.go では画面に &quot;Hello world!&quot; と出力するプログラムを扱いました．
 ここからは，これをベースとして色々な言語機能を説明し，プログラムを実際に変更して動かしてみることで，Go言語に入門 していきたいと思います．</p>
-<p>すでにGo言語に慣れている人は，これ以降をスキップして<!-- [第2回](02_http.md) に進んで-->もらって構いません．
+<p>すでにGo言語に慣れている人は，これ以降をスキップして <a href="02_http.html">第2回</a> に進んでもらって構いません．
 お疲れさまでした．</p>
 <h3 id="maingo-解説"><a class="header" href="#maingo-解説">main.go 解説</a></h3>
 <p>初期状態の tutorial.go/main.go は以下のようになっています．</p>
@@ -831,7 +831,7 @@ Go言語 は慣れると割と書きやすい言語ですが，慣れるまで�
 これ以降の資料でも可能な限り補足はしていくつもりですが，必要に応じてこのページを見返したり，教員へ質問したり，あるいは自身で調べたりなどによって対応してください．</p>
 <p>今回の内容は以上になります．
 お疲れさまでした．</p>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="http通信とルーティング"><a class="header" href="#http通信とルーティング">HTTP通信とルーティング</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="02-http通信とルーティング"><a class="header" href="#02-http通信とルーティング">02: HTTP通信とルーティング</a></h1>
 <p>今回から本格的にWebアプリケーションを構築するための基礎技術に触れていきます．</p>
 <p>第2回は，特に以下の内容について扱います．</p>
 <ol>
@@ -1174,6 +1174,318 @@ Go言語 では便利なことに，だいたいのパッケージを網羅し�
 配布したプログラムは最低限の機能しか持たないため，これをベースとしてWebアプリケーションを構築するのはかなり難しいと感じたかもしれません．</p>
 <p>次回は，Webアプリケーション開発をより簡単にする仕組みについて触れます．
 また，Client-side アプリケーションから Server-side アプリケーションへ情報を送信する方法について扱い，より実用的なアプリケーションを開発できる体制を整えていきます．</p>
+<p>今回の内容は以上になります．
+お疲れさまでした．</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="03-webアプリケーションフレームワーク"><a class="header" href="#03-webアプリケーションフレームワーク">03: Webアプリケーションフレームワーク</a></h1>
+<p><a href="02_http_and_routing.html">前回</a>は，Webアプリケーションを支えるHTTP通信の仕組みや，アプリケーション開発時に使用するであろう基本的なルーティングの方法について扱いました．</p>
+<p>今回は以下の内容を通して，開発効率の向上およびユーザとのインタラクションについて扱います．．</p>
+<ol>
+<li>Web Applicaion Framework</li>
+<li>Hypertext Markup Language (HTML)</li>
+<li>formタグを用いたHTTP POST</li>
+</ol>
+<p>また今回から3回に分けて，新たなプロジェクトをベースとして演習を進めます．
+以下のリンクより新しいプロジェクト formapp.go をダウンロードし，演習が進められるよう展開・配置してください．</p>
+<p><a href="https://github.com/cs-sysdes/formapp.go">https://github.com/cs-sysdes/formapp.go</a></p>
+<p>ダウンロード方法は <a href="01_preliminary.html">第1回資料</a> を参照してください．</p>
+<h2 id="web-application-framework"><a class="header" href="#web-application-framework">Web Application Framework</a></h2>
+<p>前回配布したプログラムは基礎的なHTTPサーバ機能しか持たず，ルーティングのために自分でHTTPリクエストを解析したり，適切なHTTPレスポンスを返すようヘッダ情報を追加したりといった処理を自分で実装する必要がありました．
+今後，より複雑な機能を持った実用的なWebアプリケーションを開発していくにあたって，こうした処理を開発者自身が毎回行うのは面倒ですし，ミスが起こりやすく非効率的です．</p>
+<p>こうしたWebアプリケーション開発において常に必要となる共通処理をまとめたライブラリや，必要に応じて開発を支援する仕組みなどを集めたものを，一般に <b>Web Application Framework (WAF)</b> あるいは単に Web Framework と呼びます．
+多くのWAFは適切なHTTPレスポンスを簡単に返すことができる仕組みや，HTMLページの生成を補助する仕組みを持っており，Webアプリケーション開発において面倒な部分を肩代わりしてくれます．</p>
+<p>現代のWebアプリケーション開発においてはなにかしらのWAFをベースに開発が行われている場合が多いです．
+有名どころでは以下のようなWAFが対応する各プログラミング言語と組合せて実際に使われています．</p>
+<div class="table-wrapper"><table><thead><tr><th>WAF</th><th>Language</th></tr></thead><tbody>
+<tr><td>Drogon</td><td>C++</td></tr>
+<tr><td>Spring</td><td>Java</td></tr>
+<tr><td>Play</td><td>Java,Scala</td></tr>
+<tr><td>Rails</td><td>Ruby</td></tr>
+<tr><td>Laravel</td><td>PHP</td></tr>
+<tr><td>Phoenix</td><td>Elixir</td></tr>
+<tr><td>Django</td><td>Python</td></tr>
+</tbody></table>
+</div>
+<p>一方で，Go言語 は Google によって開発がすすめられた比較的新しい言語である背景から，Web周りのサポートが他の言語と比べても非常に充実しています．
+実際WAFに頼らなくても，標準パッケージ <code>net/http</code> だけでも十分にWebアプリケーションの開発が可能です．
+Go言語に対応するWAFには <code>net/http</code> パッケージに薄い wrapper を追加する程度のものも多く，こういった点からも標準パッケージによるサポートの強さがわかります．</p>
+<p>以下ではまず，標準パッケージ <code>net/http</code> を用いたHTTPサーバ実装の例を示します，
+この例の中で <code>net/http</code> の便利さを理解してもらった上で，実は少し使いづらい部分なども紹介し，以降の演習にて扱う Go言語 向けのWAF: <a href="https://github.com/gin-gonic/gin">Gin</a> を導入します．</p>
+<h3 id="標準パッケージ-nethttp"><a class="header" href="#標準パッケージ-nethttp">標準パッケージ <code>net/http</code></a></h3>
+<p><code>net/http</code> パッケージを使用して，<a href="02_http_and_routing.html">前回資料</a> と同様に localhost:8000/ に GET リクエストが来た場合に &quot;Hello world.&quot; を表示するWebサーバを構築してみます．
+具体的には，以下のようなコードになります．
+これは説明の都合上示した例ですので，今回配布した formapp.go 内に以下を実装する必要はありません．</p>
+<pre><code class="language-go">package main
+
+import &quot;net/http&quot;
+
+func main() {
+    http.HandleFunc(&quot;/&quot;, rootHandler)
+    http.ListenAndServe(&quot;:8000&quot;, nil)
+}
+
+func rootHandler(w http.ResponseWriter, r *http.Request) {
+    if r.URL != &quot;/&quot; {
+        w.WriteHeader(http.StatusNotFound)
+        return
+    }
+    if r.Method != &quot;GET&quot; {
+        w.WriteHeader(http.StatusMethodNotFound)
+        return
+    }
+    w.Write([]byte(&quot;Hello world.&quot;))
+}
+</code></pre>
+<div class="memo">
+蛇足ですが，11 行目および 15 行目の条件分岐ですが，こうした場合はおそらく <code class="hljs go">switch</code> を使った方が楽でしょう．
+</div>
+<p>一見して <code>main</code> 関数がすっきりしたことがわかります．
+前回配布したプログラムでは，通信を受けるソケットを用意したり，接続を待ち受けたりといった動作をすべて記述していましたが，今回の例ではそうした面倒な記述がすべて 7 行目の <code>http.ListenAndServe</code> 関数呼び出しにて済んでいます．</p>
+<p>また，<code>net/http</code> パッケージはルーティングの機能を<b>パスと対応する処理のペア</b>を登録する形式で提供しています．
+6 行目に示す <code>http.HandleFunc</code> 関数は引数としてパスと指定された形式のコールバック関数を受け取り，リクエストパスが &quot;/&quot; であるリクエストは <code>rootHandler</code> 関数に処理を任せるものとしてルーティング設定を登録します．</p>
+<p>コールバック関数として登録される <code>rootHandler</code> 関数は，引数として <code>http.ResponseWriter</code> および <code>*http.Request</code> の 2 つの構造体をとります．</p>
+<p>第1引数である <code>http.ResponseWriter</code> 型の変数 <code>w</code> は，HTTPレスポンスとしてヘッダ情報や BODY を書き込むための変数であり，12 行目や 16 行目のように<code>http.ResponseWriter.WriteHeader</code> メソッドによって BODY が空のヘッダ情報だけを返すことができたり，19 行目のように <code>http.ResponseWriter.Write</code> メソッドによって BODY を含めたレスポンスを返すことができます．
+なお，<code>http.ResponseWriter.Write</code> 関数は，引数によって渡された BODY に喜寿されるべきバイト列から自動で <code>Content-Length</code> の値を計算し，HTTP header としてレスポンスに含めてくれます．</p>
+<p>第2引数である <code>*http.Request</code> 型の変数 <code>r</code> は，HTTPリクエストを格納している変数であり，パスやメソッドなどの情報はすでにパースされて構造体のメンバとして保存されています．
+前回のプログラムでは自分で <code>strings.Split</code> 関数などを用いてメソッドの種類やパスを取得する必要がありましたが，<code>http.Request</code> を介することで，<code>http.Request.Method</code> や <code>http.Request.URL</code> などによってメソッドやパスを直接参照することができるようになっています．</p>
+<p>ここまでを見ると，<code>net/http</code> パッケージはこれだけでも十分に便利な気がしてきます．
+一方で，11 行目の条件分岐について何か違和感がないでしょうか．
+6 行目ですでに &quot;/&quot; に対するルーティングとしてパスを検査しているにもかかわらず，再びここでパスを検査しています．
+一見すると無意味な条件分岐にも見えますが，実はきちんと意味のある条件分岐です．</p>
+<p>6 行目 <code>http.HandleFunc</code> 関数の第1引数は，<strong>最長一致</strong> の原則を採用しています．
+すなわち，6 行目の設定だけでは，&quot;/&quot; が引っかかるのはもちろんですが &quot;/hello&quot; や &quot;/bye&quot; でも先頭の &quot;/&quot; は一致しているので <code>rootHandler</code> 関数が呼び出されてしまいます．
+ここでは，&quot;/&quot; だけに限定して &quot;Hello world.&quot; を返したいので，11 行目のように正確なパス検査を入れる必要があります．
+また，メソッドによる分岐も 15 行目のように <code>http.Request.Method</code> を参照して設定する必要があります．</p>
+<p>このように <code>net/http</code> パッケージは<a href="02_http_and_routing.html">前回</a>配布した httpserver.go よりは便利ですが，いろいろと足りない部分などがあります．
+特に <code>net/http</code> パッケージの持つルーティング機能はやや遅い (計算コストが高い) ことが知られており，こうしたちょっとした面倒さやアプリケーションの応答速度などを気にする場合には，さらに別のWAFの使用が検討されます．</p>
+<h3 id="gin-web-framework"><a class="header" href="#gin-web-framework">Gin Web Framework</a></h3>
+<p><a href="https://github.com/gin-gonic/gin">Gin</a> は Go言語 によって記述された代表的WAFの1つです．
+基礎的なHTTPサーバ機能として，標準パッケージ <code>net/http</code> に代えて <a href="https://github.com/julienschmidt/httprouter">HttpRouter</a> を使用し，高速に動作するよう設計されています．</p>
+<p>Gin を用いて先ほど示した localhost:8000/ へのGETリクエストに対して &quot;Hello world.&quot; を返すHTTPサーバを実装した例を以下に示します．
+なお，この例は今回配布した formapp.go が持つ main.go ファイルを簡略化したものになっています．</p>
+<pre><code class="language-go">package main
+
+import (
+    &quot;net/http&quot;
+    &quot;github.com/gin-gonic/gin&quot;  // ginパッケージをimport
+)
+
+func main() {
+    engine := gin.Default()
+    engine.GET(&quot;/&quot;, rootHandler)
+    engine.Run(&quot;:8000&quot;, nil)
+}
+
+func rootHandler(ctx *gin.Context) {
+    ctx.String(http.StatusOK, &quot;Hello world.&quot;)
+}
+</code></pre>
+<p><code>main</code> 関数に注目すると，<code>net/http</code> パッケージを使用した場合とほとんど変わりません．
+ただし 10 行目のように，Gin ではHTTPメソッドを指定したルーティングを記述することができます．
+また <code>net/http</code> の場合とは異なり，パスとして &quot;/&quot; と指定した場合，これは基本的に &quot;/&quot; にしかマッチしません．
+これにより，先ほどのように追加条件をコールバック関数側で記述する必要がなくなるため，&quot;/&quot; へのGETリクエストに対して呼び出されるコールバック関数 <code>handleRoot</code> (14--16行目) をかなり簡単に書くことができます．</p>
+<p>コールバック関数の形式も先ほどとは異なり，引数として <code>*gin.Context</code> 型の変数のみをとる関数になります．
+<code>gin.Context</code> は，HTTPリクエストとHTTPレスポンスを合わせたような構造体だと理解しておけば良いかと思います．
+今回は文字列として &quot;Hello world.&quot; を返したいので，15行目のように <code>gin.Context.String</code> メソッドを用いてHTTPレスポンスの種類と内容を指定しています．
+より具体的に書けば，Content-Type として String = text/plain を指定し，BODYとして &quot;Hello world.&quot; を持つHTTPレスポンスを生成します．
+当然ながら，Content-Length は自動計算されます．</p>
+<p>Gin はこのようにライブラリとして便利な機能を提供するだけではなく，Framework として開発を支援する機能をいくつか提供します．
+代表的な機能の一つに Middleware の挿入という機能があり，以下のようにルーティングの前後にアプリケーション全体で共通する処理を挟むこむことができます．
+この機能により，たとえばユーザ認証を必要とするアプリケーションではルーティング前に認証処理を挟むことによってルーティング後の特定の処理と全体での共通処理を分離でき，見通しの良いアプリケーションの設計が可能になります．
+この演習中に middleware に触れるところまで進めるかはわかりませんが，こういうこともできるということだけ頭の片隅に置いておくとよいでしょう．</p>
+<p><img src="img/middleware.png" alt="Middlewares on Gin framework" /></p>
+<p>Go言語 で記述されたWAFとしては，他にも <a href="https://github.com/labstack/echo">Echo</a> などが有名ですが，本演習では Gin を扱うこととします．
+Echo にも Gin と同様に middleware を扱う仕組みが存在し，全体的な使用感も Gin と大きく差があるわけではありません．</p>
+<h5 id="練習問題-3-1"><a class="header" href="#練習問題-3-1">練習問題 3-1</a></h5>
+<p>formapp.go/main.go を編集し，<a href="02_http_and_routing.html">前回資料</a>において示した 練習問題 2-3 の内容を，Gin を用いてプログラムしてみましょう．
+具体的には，以下の要求を満たすよう formapp.go/main.go を編集してください．</p>
+<ul>
+<li>Webブラウザから <code>localhost:8000/hello</code> にアクセスした場合，&quot;Hello world.&quot; が画面に表示される．</li>
+<li>Webブラウザから <code>localhost:8000/bye</code> にアクセスした場合，&quot;Good bye.&quot; が画面に表示される．</li>
+<li>Webブラウザから <code>localhost:8000/hello.jp</code> にアクセスした場合，日本語で &quot;こんにちは&quot; と表示される．</li>
+</ul>
+<p>Gin を使用する場合，1つのルーティング (HTTPメソッドとパスの組) に対して対応する1つのコールバック関数を定義する必要があります．
+必要に応じてコールバック関数を新たに定義し，ルーティングのルールを追加することで目的の処理を実装することができます．
+関数名などは特に指定しませんが，わかりやすい名前を付けると良いでしょう．</p>
+<h2 id="hypertext-markup-language-html"><a class="header" href="#hypertext-markup-language-html">Hypertext Markup Language (HTML)</a></h2>
+<p>ここまでのプログラムは文字列を Client-side に返してきました．
+したがって，Webブラウザ上に表示される結果も単なる文字列であり，なかなかに質素なものだったと思います．
+一方で，たとえばこの演習資料のように，多くのWebページには見出しやリンク，パラグラフなどが存在しています．
+ここでは，こうした構造化された文書を Client-side に返す方法について扱います．</p>
+<p>Webサイトのように電子デバイス上での閲覧を想定した，複数のテキストを即時利用可能な形式でリンクした文書形式を一般に <b>Hypertext</b> と呼びます．
+またこうした Hypertext を記述するための形式言語を <b>Hypertext Markup Language (HTML)</b> と呼び，Webページは通常このHTMLによって記述されます．</p>
+<p>HTMLでは文書を原則として木構造で表現し，木構造を構成する節や葉は <b>タグ (tag)</b> によって文書構造中に配置されます．
+例としてWebブラウザに &quot;Hello world.&quot; とだけ表示するHTMLを以下に示します．</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;body&gt;
+        Hello world.
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>1 行目の <code>&lt;!DOCTYPE html&gt;</code> は<strong>文書型宣言</strong>と呼ばれ，これはタグではありません．
+ここではこの文書がHTML，より具体的にはHTML5によって書かれていることを宣言しており，HTMLのバージョンによって書き方が少し異なります．
+現在ではHTML5を使用するのが標準ですので，他のバージョンの書き方は特に覚えなくてもよいでしょう．</p>
+<p>2 行目の <code>&lt;html&gt;</code> は，HTML要素と呼ばれる木構造における根の役割を持つ要素の宣言をするタグです．
+この <code>&lt;html&gt;</code> タグは 6 行目の <code>&lt;/html&gt;</code> とペアになっており，一般に前者を「開始タグ」，後者を「閉じタグ」などと呼びます．
+HTMLにおける節や葉の多くは開始タグと閉じタグのペアで構成され，タグが入れ子 (ネスト)  になっている場合は外側のタグが親，内側のタグが子となる親子関係を表します．
+たとえば，3 行目に出現する <code>&lt;body&gt;</code> タグは <code>&lt;html&gt;</code> タグの子になります．
+したがって，このHTMLは <code>&lt;html&gt;</code> 要素が根であり，唯一の葉として <code>&lt;body&gt;</code> 要素を持つ木構造であることがわかります．
+注意点として，HTMLには一部単独で存在することのできるタグがあり，こうしたタグは基本的に子要素を持たないため，木構造における節になることがありません．</p>
+<p><code>&lt;body&gt;</code> はBody要素と呼ばれ，Webブラウザが画面上に表示する文書パーツを表します．
+このHTMLはBody要素内にプレーンテキストで &quot;Hello world.&quot; だけを持つので，Webブラウザ上に &quot;Hello world.&quot; と表示するだけのものとなります．
+HTMLは基本的にインデントを無視するので，&quot;Hello world.&quot; の前に余計なスペースが入ることはありません (インデントを含めて見た目通り出力する方法もあります)．</p>
+<p>多くの場合HTML文書にはBody要素のほかにHead要素と呼ばれるパーツが配置され，たとえば以下のような形式をしています．</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;formapp.go&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        Hello world.
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p><code>&lt;head&gt;</code> タグによってHTML要素直下に配置されるHead要素は，通常そのままWebブラウザ上に表示されることはありません．
+Head要素はそのページを構成するメタ情報などを記載する場所とされており，たとえば 4 行目の <code>&lt;title&gt;</code> タグはWebブラウザのタブ上などに表示するWebページのタイトルを設定するための記述です．
+この他にも，ページ全体の文字コードの指定や関連する外部ファイルの取り込みに関する情報が記載されている場合が多いです．</p>
+<p>試しにこの演習資料のHTMLソースコードを眺めてみると良いかもしれません．
+Webブラウザによって方法が異なりますが，だいたいの場合ページ上で右クリックをすると出現するメニュー内に「このページのソースを表示」などの項目があると思います．
+割と複雑なHTMLが表示されますが，当然すべて教員が心を込めて手入力した温もりあるHTMLというわけではありません．
+一部実際に手動入力している部分もありますが，ほとんど自動生成です．</p>
+<p>HTMLで使用できるタグには様々な種類があり，それぞれ特定の用途が定められています．
+なかには文書中における役割を明示するタグなどもあり，こうしたタグを適切に使用することで文書に対して意味的な構造を与えることも可能です．
+詳細は <a href="https://w3schools.com/html/default.asp">HTML | w3schools.com</a> などを参考に各自で学習を進めて下さい．</p>
+<p>WebブラウザはこうしたHTML文書を解析し，画面上に描画する機能をもったアプリケーションです．
+しかしながら，HTMLの機能だけでは人間に優しい表示を制御することは難しいので，JavaScript や CSS などを併用してより可読性が高く使いやすいWebページにできるよう開発者が努力しています．</p>
+<h3 id="ginでhtmlを返す"><a class="header" href="#ginでhtmlを返す">GinでHTMLを返す</a></h3>
+<p>それではこれまで無機質な文字列だけを返していたプログラムを編集し，HTMLを返してみます．
+とりあえず，HTMLを文字列として直接プログラム中に埋め込めば目的は達成できそうです．</p>
+<pre><code class="language-go">func rootHandler(ctx *gin.Context) {
+    ctx.String(http.StatusOK, &quot;&lt;!DOCTYPE html&gt;&lt;html&gt;...&quot;)
+}
+</code></pre>
+<p>この方法には明らかな問題があります．
+<code>gin.Context.String</code> メソッドは HTTP header に <code>Content-Type: text/plain</code> を設定してしまうため，WebブラウザによってはHTML文書ではなく単なるプレーンテキストとして認識されてしまい，正しく描画されないことがあります．
+正しいレスポンスとして設定されるべきは <code>Content-Type: text/html</code> です．
+また，HTMLを文字列として書くとシンタックスハイライトも効かないし書くの怠いですよね．
+Content-Type を変更する方法はいくつか存在しますが，もっと良い方法があればそちらを使いたいです．</p>
+<p>より良さそうな方法として，返したいHTML文書を別ファイルで用意し，そのファイルをプログラム中で読み込んでHTTPレスポンスとして返す方法を考えます．
+formapp.go/templates の中に，すでにいくつかのサンプルHTML文書を配置していますので，これを使いましょう．
+たとえば以下のような形式になると良さそうです．</p>
+<pre><code class="language-go">// このコードは嘘のコードです
+func rootHandler(ctx *gin.Context) {
+    html := file.Read(&quot;templates/hello.html&quot;)
+    ctx.String(http.StatusOK, html)
+}
+</code></pre>
+<p>先ほどよりは筋がよさそうですが，Gin は Web Framework としてもっと良い方法を提供しています．
+以下のコードでは <code>package main</code> などの共通部分を省略しています．</p>
+<pre><code class="language-go">func main() {
+    engine := gin.Default()
+    engine.LoadHTMLGlob(&quot;templates/*.html&quot;)
+    engine.GET(&quot;/&quot;, rootHandler)
+    engine.Run(&quot;:8000&quot;, nil)
+}
+
+func rootHandler(ctx *gin.Context) {
+    ctx.HTML(http.StatusOK, &quot;hello.html&quot;, nil)
+}
+</code></pre>
+<p>重要な変更点は 3 行目 <code>engine.LoadHTMLGlob(&quot;templates/*.html&quot;)</code> および 9 行目 <code>ctx.HTML(http.StatusOK, &quot;hello.html&quot;, nil)</code> の2点です．</p>
+<p>9 行目のHTTPレスポンスを設定している部分から説明します．
+先ほどまでのプログラムでは，<code>gin.Context.String</code> メソッドを使用して <code>Content-Type: text/plain</code> となる文字列データをHTTPレスポンスに設定していました．
+一方今回は，<code>gin.Context.HTML</code> メソッドを使用することで，<code>Content-Type: text/html</code> となるHTML文書をレスポンスに設定しています．
+<code>gin.Context.HTML</code> メソッドは，第1引数としてHTTPステータスコード，第2引数として返すHTML文書のファイル名を取ります．
+第3引数は今回使用しないので <code>nil</code> を渡しています．
+このメソッドは第1引数で渡されたHTTPステータスコードをともなって，第2引数で渡されたファイルに従って生成したHTML文書をHTTPレスポンスとして返します．
+すなわち，先ほど紹介したファイルを読み込んで返すという動作ができているということになります．</p>
+<p><code>gin.Context.HTML</code> ではファイル名を渡しましたが，このファイル名から当該ファイルを見つけるための設定が 3 行目の <code>engine.LoadHTMLGlob(&quot;templates/*.html&quot;)</code> になります．
+この関数は templates ディレクトリ内のHTMLファイルをアプリケーションに登録し，ファイル名からの検索対象に含めるために呼び出しています．
+すなわち，ここで登録したファイルであれば <code>gin.Context.HTML</code> メソッドからファイル名によって使用することができるということです．</p>
+<p>この方法は Gin Web Framework 特有の方法ですが，他のFrameworkでも同様の方法が提供されていることが多いと思われます．</p>
+<h5 id="練習問題-3-2"><a class="header" href="#練習問題-3-2">練習問題 3-2</a></h5>
+<p>練習問題 3-1 の内容を，それぞれ対応するHTMLファイルを作成したうえで，<code>gin.Context.HTML</code> メソッドによってHTML文書を返す方法に書き変えてみましょう．</p>
+<h2 id="formタグを用いたhttp-post"><a class="header" href="#formタグを用いたhttp-post">formタグを用いたHTTP POST</a></h2>
+<p>Server-side から Client-side へHTML文書を送ることができるようになったので，今度は逆に Client-side から何かしらの入力情報を Server-side に送ってみます．
+こうした情報送信にはHTMLタグの一つである <code>form</code> タグが使用できます．
+<code>form</code> タグの使い方を見るため，プログラムに少し修正を加えます．</p>
+<p><code>main</code> 関数内に以下のルーティングを登録してください．</p>
+<pre><code class="language-go">engine.GET(&quot;/name-form&quot;, nameFormHandler)
+engine.POST(&quot;/register-name&quot;, registerNameHandler)
+</code></pre>
+<p>また，以下の関数をファイル内に定義してください．</p>
+<pre><code class="language-go">func nameFormHandler(ctx *gin.Context) {
+    ctx.HTML(http.StatusOK, &quot;name_form.html&quot;, nil)
+}
+
+func registerNameHandler(ctx *gin.Context) {
+    body, _ := ctx.GetRawData()
+    ctx.String(http.StatusOK, string(body))
+}
+</code></pre>
+<p>Webブラウザから localhost:8000/name-form にアクセスすると，以下のような入力画面が表示されるはずです．
+入力欄に適当な名前を入力後，送信ボタンを押してどうなるか観察してみましょう．
+このとき，入力として英数字のみを入れた場合と，漢字やひらがな，スペース (空白文字) などを含めた場合とで結果に違いが出るか確認してください．</p>
+<p>例として，入力欄に「東工大」といれて送信した場合，次の画面に以下のような表示が出ると思います．</p>
+<pre><code>name=%E6%9D%B1%E5%B7%A5%E5%A4%A7
+</code></pre>
+<p>これについて次の節で説明します．</p>
+<h3 id="content-type-applicationx-www-form-urlencoded"><a class="header" href="#content-type-applicationx-www-form-urlencoded">Content-Type: application/x-www-form-urlencoded</a></h3>
+<p><code>form</code>タグから送られたデータは，基本的に <code>key=value&amp;key2=value2&amp;...</code> という形式でサーバへ送信されます．
+今回の例では，<code>form</code> タグから <code>name</code> という key で入力値を送っているため，<code>name=&lt;入力値&gt;</code> という形でサーバへ情報が送られてきます．</p>
+<p>このとき，HTTPではURLなどの文字列において，たとえばスペースや「@」などの通常使用できない文字が存在します．
+こうした文字は通信可能な形式に変換 (encode) された上で送信されるため，正しく解釈するには受信側で逆変換 (decode) してやる必要があります．
+日本語のようなマルチバイト文字は基本的に<code>%..</code>のような形式に変換されるため，「東工大」と入力したものをそのまま表示しようとすると怪しい文字列になるわけです．</p>
+<p>逆変換のためには，たとえば Java では <code>java.net.URLDecoder</code> というクラスなどが用意されていますが，Go言語ではより扱いを簡単にするために，<code>gin.Context</code> のメソッドとして指定した key に対応する value を自動的に逆変換して返す <code>GetPostForm</code> メソッドが存在します．
+したがって，<code>registerNameHandler</code> 関数を以下のように書き変えると適切な表示に変換されるはずです．</p>
+<pre><code class="language-go">func registerNameHandler(ctx *gin.Context) {
+    name, _ := ctx.GetPostForm(&quot;name&quot;)
+    ctx.String(http.StatusOK, name)
+}
+</code></pre>
+<p>このメソッドが存在することによって，<code>key1=value1&amp;key2=value2&amp;key3=value3</code> などのような情報が送られてきた場合でも，&quot;&amp;&quot; で分割して decode して...などとしなくても簡単に目的の値を取り出すことができます．
+なお，<code>gin.Context.GetPostForm</code> メソッドは，指定した key が存在しない場合に第2戻り値として <code>false</code> を返すため，これを使用して key の存在判定を行うことができます．</p>
+<h3 id="htmlへの値の埋め込み"><a class="header" href="#htmlへの値の埋め込み">HTMLへの値の埋め込み</a></h3>
+<p><code>registerNameHandler</code> は送られてきた入力値を文字列で返しているだけなので，これをHTMLで返すように変更しましょう．
+Go言語のHTMLテンプレート機能には，HTMLファイル中に変数の値などを埋め込む機能があるため，これを使用してHTML文書中に送信されてきた名前情報を入れてみます．</p>
+<p>templates/result.html は以下のようなHTML文書 (のテンプレート) になっています．</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+    &lt;head&gt;
+        &lt;title&gt;Result | formapp.go&lt;/title&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+        &lt;h1&gt;入力結果&lt;/h1&gt;
+        &lt;dl&gt;
+            &lt;dt&gt;名前&lt;/dt&gt;
+            &lt;dd&gt;{{ .Name }}&lt;/dd&gt;
+        &lt;/dl&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<p>詳しい構造の説明は省略しますが，10 行目に見慣れない表現 <code>{{ .Name }}</code> があります．
+これはHTML文書中に変数の値を埋め込むための構文です．
+このHTMLテンプレートを使用して，入力結果をHTMLで返す <code>registerNameHandler</code> 関数の例を以下に示します．</p>
+<pre><code class="language-go">func registerNameHandler(ctx *gin.Context) {
+    name, _ := ctx.GetPostForm(&quot;name&quot;)
+    ctx.HTML(http.StatusOK, &quot;result.html&quot;, gin.H{&quot;Name&quot;: name})
+}
+</code></pre>
+<p>基本的には &quot;Hello world.&quot; を表示したときの例と同じですが，<code>gin.Context.HTML</code> の第3引数として <code>nil</code> ではなく <code>gin.H{&quot;Name&quot;: name}</code> を渡しています．
+<code>gin.H</code> 関数は単純な連想配列 (HashMap) を提供する関数で，ここでは &quot;Name&quot; という key に変数 <code>name</code> の値を紐づけています．
+key と指定される &quot;Name&quot; は templates/result.html 中の <code>{{ .Name }}</code> と同じである必要があります．
+すなわち，<code>{{ .Name }}</code> は渡された連想配列から key として &quot;Name&quot; に対応する値を受け取り，その場に展開するコードとして働きます．</p>
+<p>簡単ですが，これで Client-side から Server-side への情報送信およびHTMLの整形方法を扱ったことになります．</p>
+<h5 id="練習問題-3-3"><a class="header" href="#練習問題-3-3">練習問題 3-3</a></h5>
+<p><code>&lt;form&gt;</code> タグでは <code>action</code> 属性で送信先，<code>method</code> 属性でHTTPリクエストメソッドの種類を指定できます．
+では，いま <code>action=&quot;POST&quot;</code> となっている場所を <code>action=&quot;GET&quot;</code> とした場合，どういった変化が起こるか，確認してみてください．</p>
+<h2 id="まとめ-2"><a class="header" href="#まとめ-2">まとめ</a></h2>
+<p>今回はより実践的なWebアプリケーション開発のためのフレームワークについて扱いました．
+また，HTMLを返すことでWebページとして表示できるようにし，同時に Client-side から Server-side へ情報を送信する方法を扱いました．</p>
+<p>次回から2回に分けて，通信ごとに情報を記憶しておく方法を扱います．
+HTTP通信は基本的に記憶を持たないため，前回の通信時にどういった状態であったかという情報を次の通信時まで保持するためには工夫が必要です．
+この工夫として2種類の方法を2回に分けて扱います．</p>
+<p>次回以降も formapp.go を使用しますので，削除しないよう気を付けてください．</p>
 <p>今回の内容は以上になります．
 お疲れさまでした．</p>
 
