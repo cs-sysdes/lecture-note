@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><a href="02_http_and_routing.html">02: HTTP通信とルーティング</a></li><li class="chapter-item expanded "><a href="03_web_application_framework.html">03: Webアプリケーションフレームワーク</a></li><li class="chapter-item expanded "><div>04: HTTP通信における状態管理 (1)</div></li><li class="chapter-item expanded "><div>05: HTTP通信における状態管理 (2)</div></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><div>06: タスクの登録・削除</div></li><li class="chapter-item expanded "><div>07: CSSによる装飾</div></li><li class="chapter-item expanded "><div>08: 検索機能</div></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><a href="02_http_and_routing.html">02: HTTP通信とルーティング</a></li><li class="chapter-item expanded "><a href="03_web_application_framework.html">03: Webアプリケーションフレームワーク</a></li><li class="chapter-item expanded "><a href="04_state_management_v1.html">04: HTTP通信における状態管理 (1)</a></li><li class="chapter-item expanded "><div>05: HTTP通信における状態管理 (2)</div></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><div>06: タスクの登録・削除</div></li><li class="chapter-item expanded "><div>07: CSSによる装飾</div></li><li class="chapter-item expanded "><div>08: 検索機能</div></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -1178,7 +1178,7 @@ Go言語 では便利なことに，だいたいのパッケージを網羅し�
 お疲れさまでした．</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="03-webアプリケーションフレームワーク"><a class="header" href="#03-webアプリケーションフレームワーク">03: Webアプリケーションフレームワーク</a></h1>
 <p><a href="02_http_and_routing.html">前回</a>は，Webアプリケーションを支えるHTTP通信の仕組みや，アプリケーション開発時に使用するであろう基本的なルーティングの方法について扱いました．</p>
-<p>今回は以下の内容を通して，開発効率の向上およびユーザとのインタラクションについて扱います．．</p>
+<p>今回は以下の内容を通して，開発効率の向上およびユーザとのインタラクションについて扱います．</p>
 <ol>
 <li>Web Applicaion Framework</li>
 <li>Hypertext Markup Language (HTML)</li>
@@ -1488,6 +1488,349 @@ HTTP通信は基本的に記憶を持たないため，前回の通信時にど�
 <p>次回以降も formapp.go を使用しますので，削除しないよう気を付けてください．</p>
 <p>今回の内容は以上になります．
 お疲れさまでした．</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="04-http通信における状態管理-1"><a class="header" href="#04-http通信における状態管理-1">04: HTTP通信における状態管理 (1)</a></h1>
+<p><a href="03_web_application_framework.html">前回</a>は，より効率的にWebアプリケーション開発を進める仕組みとしてWeb Application Frame について扱いました．
+基礎編最後の2回は，実践的なWebアプリケーション開発のために必要な状態管理について扱います．</p>
+<p>内容に入る前に，今回開発するアプリケーション formapp.go の仕様を以下のリンクより確認してください．</p>
+<p>仕様書：<a href="https://cs-sysdes.github.io/formapp.html">https://cs-sysdes.github.io/formapp.html</a></p>
+<p>仕様書に示す通り，formapp.go は 5 つの画面からなるアプリケーションです．
+本来であれば 1 画面でまとめてすべての情報を入力できる程度のものですが，練習のため個別の入力画面としています．
+示された仕様から，formapp.go は <strong>5.確認画面</strong> において <strong>1～4 の画面において入力した情報を参照</strong>する必要があることがわかります．</p>
+<p><strong>04: 状態管理 (1)</strong> および <strong>05: 状態管理 (2)</strong> では，この挙動を実現する上で解決しなければいけない状態管理に関する課題を説明し，その解決方法を実装します．
+なお，ここで<strong>状態</strong>とはユーザのログイン状態やリクエストに関する一時的な記憶など，比較的短時間で変化し得るものを仮定しています．</p>
+<p>今回は特に以下の内容を通して状態管理に関する課題を理解し，1 つ目の解決方法を実装していきます．</p>
+<ol>
+<li>事前準備: パッケージ分割</li>
+<li>HTTP通信のステートレス性</li>
+<li>状態管理手法 (1): ステートレス方式</li>
+</ol>
+<p>引き続き formapp.go をベースプロジェクトとして使用します．
+前回の練習問題などにおいてすでに修正を加えているかと思いますが，初期状態に戻す必要はありません．
+複数機能の開発を行うため，まずは Go言語 におけるパッケージ分割 (ソースコード分割) の方法について説明し，状態管理のための準備を整えます．</p>
+<p>これ以降，提示するコードに関して以下に注意してください．</p>
+<ul>
+<li>package 宣言を省略するなど，ソースコードの一部を抜粋している場合があります．</li>
+<li>表記中の <code>...</code> はコードの省略を意味します．</li>
+<li>提示したコードの n 行目などと指定した場合は，本資料上での行数を意味しています．
+多くの場合，実際のソースコード上での行数と一致するものではありません．</li>
+</ul>
+<h2 id="事前準備-パッケージ分割"><a class="header" href="#事前準備-パッケージ分割">事前準備: パッケージ分割</a></h2>
+<p>これから複数の機能を実装していくにあたり，すべてを formapp.go/main.go の中に記述していると，プログラム全体の見通しが悪くなりミスを発見しづらくなるなど，あまり良いことはありません．
+C言語 や Java，その他の言語を用いる場合においても，ある程度の規模になるとソースコードを機能や役割ごとに分割し，プログラムの構造を整理する必要が生じます．
+ここでは Go言語 においてソースコード分割 (パッケージ分割) の方法を簡単に説明し，以降の演習に備えます．</p>
+<p>いま formapp.go/main.go が以下の状態であると仮定して話を進めます．
+各自で修正した部分がある場合でも，元に戻す必要はありません．
+現在の手元のソースコードの状態と読み換えて資料を進めてください．</p>
+<p><span class="filename">formapp.go/main.go</span></p>
+<pre><code class="language-go">func main() {
+    ...
+    engine.GET(&quot;/&quot;, rootHandler)
+    ...
+}
+
+func rootHandler(ctx *gin.Context) {
+    ...
+}
+</code></pre>
+<p>ここでは <code>rootHandler</code> 関数を <code>service</code> パッケージに分割することにします．
+前回の練習課題などで他にも定義した関数があれば，それらもついでに移動しましょう．</p>
+<h3 id="service-パッケージへの関数定義の移動"><a class="header" href="#service-パッケージへの関数定義の移動">service パッケージへの関数定義の移動</a></h3>
+<p>ディレクトリ名がパッケージ名となるので，まず formapp.go/service というディレクトリを作成します．
+また，作成したディレクトリ下に適当な名前を付けたGo言語ソースファイルを配置します．
+ここでは formapp.go/service/handler.go とでもしておきましょう．
+ファイル名は基本的にパッケージの import などに影響を与えないため，わかりやすい名前であれば特に制限はありません．</p>
+<p>作成したソースファイルにプログラムを書き込みます．</p>
+<p><span class="filename">formapp.go/service/handler.go</span></p>
+<pre><code class="language-go">package service
+
+import (
+    &quot;github.com/gin-gonic/gin&quot;
+)
+
+func RootHandler(ctx *gin.Context) {
+    ...
+}
+</code></pre>
+<p>1行目のパッケージ宣言は，このファイルが属するパッケージ名として <code>service</code> を宣言しています．
+パッケージ宣言は直上のディレクトリ名のみを宣言し，Java のようにすべてのパッケージ階層を宣言する必要はありません．</p>
+<p>コールバック関数作成時に Gin によって提供される構造体 <code>gin.Context</code> を使用するため，Gin のパッケージを import します．
+他にも関数内で使用するパッケージがある場合には，ここで明示的に import する必要があります．
+たとえば標準パッケージ <code>fmt</code> を使用する場合，たとえ main.go 内で <code>fmt</code> を import していても，こちらのファイルには適用されないので，ここで再度 import する必要があります．</p>
+<p>7行目において関数 <code>RootHandler</code> を定義しています．
+<a href="01_preliminary.html">第1回</a>でも触れたように，Go言語では<strong>識別子の先頭が大文字の場合のみ他のパッケージから可視</strong>であるため，<code>rootHandler</code> ではなく <code>RootHandler</code> とする必要があります．</p>
+<p>さて，関数定義を新たなパッケージ <code>service</code> へ移動したので，main.go の方も手直しが必要です．</p>
+<h3 id="service-パッケージの利用"><a class="header" href="#service-パッケージの利用">service パッケージの利用</a></h3>
+<p><code>main</code> パッケージから <code>service</code> パッケージを利用するには，これを import する必要があります．
+また，ルーティング時に指定するコールバック関数も，<code>service</code> パッケージにより提供されるものに変更しなくてはいけません．</p>
+<p>修正後の formapp.go/main.go を以下に示します．
+主な変更点は 8 行目と 13 行目です．</p>
+<p><span class="filename">formapp.go/main.go</span></p>
+<pre><code class="language-go">package main
+
+import (
+    &quot;fmt&quot;
+    &quot;net/http&quot;
+
+    &quot;github.com/gin-gonic/gin&quot;
+    &quot;formapp.go/service&quot;
+)
+
+func main() {
+    ...
+    engine.GET(&quot;/&quot;, service.RootHandler)
+    ...
+}
+
+// rootHandler関数の定義はserviceパッケージへ移動済み
+</code></pre>
+<p>8行目において先ほど作成した <code>service</code> パッケージを import し，使用可能にしています．
+Go言語では，C言語のように <code>import &quot;./service&quot;</code> などとして import することができません．
+標準パッケージ以外のパッケージを使用する場合，必ず<strong>モジュール名から使用するパッケージ名までのパスを記述</strong>する必要があります．
+今回の場合モジュール名は <code>formapp.go</code> ですので，import 文には &quot;formapp.go/service&quot; を指定しています．
+なお，モジュール名は formapp.go/go.mod の1行目に <code>mod formapp.go</code> として宣言しています．</p>
+<p>13行目において &quot;/&quot; への GET アクセスに対し <code>service.RootHandler</code> を呼び出すルーティング設定をしています．
+<code>RootHandler</code> 関数は <code>service</code> パッケージ内の関数なので，このように指定する必要があります．</p>
+<div class="memo">
+github.com/gin-gonic/gin はモジュール名ですが，パッケージ名は gin です．
+github.com/gin-gonic の部分は GitHub 上でのユーザディレクトリのようなものなので，実質的にモジュールのルートディレクトリは gin になります．
+Go言語ではこのようにモジュールルートもパッケージになります．
+一方で，パッケージ名として '.' (ドット) は使用できない文字なので，本演習のようにルートディレクトリとして formapp.go などと名前を付けてしまうと，そのままパッケージ名として採用できなくなります．
+</div>
+<p>パッケージ分割の方法がわかったところで，今回のメイントピックである状態管理について見ていきます．</p>
+<h2 id="http通信のステートレス性"><a class="header" href="#http通信のステートレス性">HTTP通信のステートレス性</a></h2>
+<p>WebアプリケーションはHTTP通信によって Client-side と Server-side が情報をやり取りし，目的のタスクを実行するアプリケーションです．
+したがって，WebアプリケーションはHTTP通信の持つ制限や制約に縛られます．
+HTTP通信が持つ制約の中でも，Webアプリケーション開発において大きな課題となるのが，<strong>ステートレス性</strong>という性質です．</p>
+<p>HTTP通信のステートレス性とは，簡単に言えば<strong>個々の通信でやりとりした情報や状態は何もしなければ次の通信に引き継がれない</strong>という性質です．</p>
+<p><img src="img/http_stateless_communication.png" alt="Stateless communication on HTTP" /></p>
+<p>いま作成したい formapp.go の仕様で考えると，この性質によって「1. 名前入力画面」で入力された情報は<strong>アプリケーションが何もしなければ</strong>次の「2. 生年月日入力画面」へは引き継がれず，最終的に「5. 確認画面」で表示することもできません．
+すなわち，HTTP通信自体はこうした情報を自動で保持する仕組みはなく，<strong>アプリケーションの責任</strong>において保持しなければいけないということになります．</p>
+<p>Webアプリケーションにおける状態管理とは，1つのリクエストと1つのレスポンスの対からなる通信について，<strong>複数の通信間で状態 (情報) を引き継ぐ</strong>ことを意味します．
+複数の通信間で状態を引き継ぐためには，<strong>どこかに引き継ぎたい状態を保存</strong>しておき，<strong>通信のたびに保存していた状態を確認</strong>することができれば良いでしょう．</p>
+<p>このとき，どこに状態を保存するかによって大きく2つの方式を考えることができます．
+これらの方式を，本演習では「<strong>ステートレス方式</strong>」および「<strong>セッション方式</strong>」と呼ぶこととします．</p>
+<p>両方式の違いを以下に簡単にまとめます．</p>
+<div class="table-wrapper">
+<table style="width: 100%">
+    <thead>
+        <tr>
+            <th style="width: 40%">ステートレス方式</th>
+            <th style="width: 20%"></th>
+            <th style="width: 40%">セッション方式</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td style="width: 40%">通信上に載せる</td>
+            <td style="width: 20%; text-align: center">状態の保存</td>
+            <td style="width: 40%">Server-side アプリケーションが記憶</td>
+        </tr>
+        <tr>
+            <td style="width: 40%">Server が状態を記憶する必要がなく，通信相手を区別する仕組みも不要</td>
+            <td style="width: 20%; text-align: center">利点</td>
+            <td style="width: 40%">通信量が扱う状態のデータサイズに依存しにくい</td>
+        </tr>
+        <tr>
+            <td style="width: 40%">扱う状態のデータサイズに依存して通信料が増える</td>
+            <td style="width: 20%; text-align: center">欠点</td>
+            <td style="width: 40%">複数 Client からの並行アクセスに対し通信相手を弁別する仕組みが必要</td>
+        </tr>
+    </tbody>
+</table>
+</div>
+<div class="memo">
+「ステートレス方式」および「セッション方式」という名称は便宜上のものであり，一般的な呼称ではないことに注意．
+</div>
+<p>今回は特に「ステートレス方式」について実装を進め，次回「セッション方式」を扱います．</p>
+<h2 id="状態管理手法-1-ステートレス方式"><a class="header" href="#状態管理手法-1-ステートレス方式">状態管理手法 (1): ステートレス方式</a></h2>
+<p>ステートレス方式は，Server-side アプリケーションが状態を持たない (= ステートレス) ことから，このような名称を便宜上与えています．
+Server-side アプリケーションが情報を持たない代わりに，ステートレス方式では毎回の通信にこれまでのすべての状態を載せることで，複数の通信間での状態の引き継ぎを実現しています．</p>
+<p>formapp.go におけるステートレス方式を図示すると以下のようになります．</p>
+<p><img src="img/formapp_stateless.png" alt="Stateless communication in formapp.go" /></p>
+<p>図中に示すように，各通信に前の通信で得た情報を毎回しつこく載せ続けることによって，Server-side が記憶を持っていなくとも，<strong>通信の内容を見ればすべての状態を把握可能</strong>な仕組みを作ることができます．</p>
+<p>それでは実際にステートレス方式で formapp.go を実装してみましょう．</p>
+<h3 id="仮ルーティングの設定"><a class="header" href="#仮ルーティングの設定">仮ルーティングの設定</a></h3>
+<p>はじめに formapp.go/main.go 内にルーティングのみ先に定義してしまいましょう．
+formapp.go の仕様において最低限必要なルーティング設定は以下の 5 つです．</p>
+<ul>
+<li>スタート画面を表示 (GET) するルート</li>
+<li>スタート画面からのPOSTを受け取るルート</li>
+<li>名前入力画面からのPOSTと受け取るルート</li>
+<li>生年月日入力画面からのPOSTを受け取るルート</li>
+<li>メッセージ入力画面からのPOSTを受け取るルート</li>
+</ul>
+<p>ここで，名前入力画面，生年月日入力画面，メッセージ入力画面，確認画面を表示するルートは不要である点に注意してください．
+これらの画面は，前の画面からのPOSTリクエストに対するレスポンスとして返すことができるため，別途GETメソッドによるアクセスを考える必要がありません．
+また，確認画面からスタート画面に戻る際は，form タグでスタート画面への GET メソッドを送信するか，単にリンクとすることで対応可能です．</p>
+<p>これらのルーティングを先に設定してしまいましょう．</p>
+<p><span class="filename">formapp.go/main.go</span></p>
+<pre><code class="language-go">func main() {
+    ...
+    engine.GET(&quot;/stateless/start&quot;, notImplemented)
+    engine.POST(&quot;/stateless/start&quot;, notImplemented)
+    engine.POST(&quot;/stateless/name&quot;, notImplemented)
+    engine.POST(&quot;/stateless/birthday&quot;, notImplemented)
+    engine.POST(&quot;/stateless/message&quot;, notImplemented)
+    ...
+}
+
+func notImplemented(ctx *gin.Context) {
+    msg := fmt.Sprintf(&quot;%s to %s is not implemented yet&quot;, ctx.Request.Method, ctx.Request.URL)
+    ctx.String(http.StatusNotImplemented, msg)
+}
+</code></pre>
+<p>ルーティングを設定する際，10行目のような未実装であることを通知するだけの関数などを仮配置しておくと便利です．</p>
+<h3 id="スタート画面"><a class="header" href="#スタート画面">スタート画面</a></h3>
+<p>仕様書に従って 1. スタート画面 を作成します．
+この画面はステートレス方式とセッション方式でほとんど共通ですので，templates/start.html などとして以下のボタンを設置したページを配置します．
+なお，<code>&lt;body&gt;</code> タグなどは省略していますので，各自で適宜記述してください．</p>
+<p><span class="filename">formapp.go/templates/start.html</span></p>
+<pre><code class="language-html">&lt;form action=&quot;{{ .Target }}&quot; method=&quot;post&quot;&gt;
+    &lt;label&gt;アンケート開始&lt;/label&gt;&lt;br&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;start&quot;&gt;&lt;/input&gt;
+&lt;/form&gt;
+</code></pre>
+<p>ここで，1行目において <code>action=&quot;{{ .Target }}&quot;</code> としてPOST先を変更できるようにしています．
+こうすることで，ステートレス方式でもセッション方式でも，このテンプレートを使い回せるようにしています．</p>
+<p>次にスタート画面へのGETアクセスを受ける関数を作成します．</p>
+<p>ここからステートレス方式の実装を進めるにあたり，次回セッション方式を実装する際と関数名の衝突が発生しないよう新しいパッケージを作成しておきます．
+ここでは先ほど作成した formapp.go/service ディレクトリの下に stateless ディレクトリを作成し，<code>stateless</code> パッケージとして機能を実装していくこととします．</p>
+<p>Go言語 のソースファイルとして先ほど作成した stateless ディレクトリに適当な名前のファイルを作成します．
+ここでは formapp.go/service/stateless/handler.go としておきましょう．</p>
+<p><span class="filename">formapp.go/service/stateless/handler.go</span></p>
+<pre><code class="language-go">package stateless
+
+import (
+    &quot;net/http&quot;
+    &quot;github.com/gin-gonic/gin&quot;
+)
+
+func Start(ctx *gin.Context) {
+    ctx.HTML(http.StatusOK, &quot;start.html&quot;, gin.H{ &quot;Target&quot;: &quot;/stateless/start&quot; })
+}
+</code></pre>
+<p>ここではスタート画面における POST 先を /stateless/start としています．</p>
+<p>formapp.go/main.go を修正し，スタート画面への GET リクエストを飛ばせるようにしてみましょう．</p>
+<p><span class="filename">formapp.go/main.go</span></p>
+<pre><code class="language-go">import (
+    ...
+    &quot;formapp.go/service/stateless&quot;  // statelessパッケージを使用
+)
+func main() {
+    ...
+    engine.GET(&quot;/stateless/start&quot;, stateless.Start)
+    engine.POST(&quot;/stateless/start&quot;, notImplemented)
+    ...
+}
+</code></pre>
+<p>3 行目の記述によって，<code>stateless</code> パッケージを呼び出せるようにしています．
+<code>stateless</code> パッケージ内の関数などを使用する場合は，Javaのように <code>service.stateless.Start</code> とするのではなく，単に <code>stateless.Start</code> で呼び出すことができます (7行目参照)．
+このルールでは別々のモジュールで定義された同じパッケージ名で衝突が容易に発生するように思いますが，Go言語では import 時にパッケージに別名をつけることができるため，それほど問題にはなりません．</p>
+<p>アプリケーションを起動し，Web ブラウザから http://localhost:8000/stateless/start へアクセスしてみましょう．
+スタート画面が表示されれば成功です．</p>
+<h3 id="名前入力画面"><a class="header" href="#名前入力画面">名前入力画面</a></h3>
+<p>ここではまだ前のページから引き継ぐべき状態がありません．
+したがって，スタート画面と同様にセッション方式でも使用できるよう名前入力画面を作成します．</p>
+<p><span class="filename">formapp.go/templates/name-form.html</span></p>
+<pre><code class="language-html">&lt;form action=&quot;{{ .Target }}&quot; method=&quot;post&quot;&gt;
+    &lt;label&gt;名前: &lt;/label&gt;
+    &lt;input type=&quot;text&quot; name=&quot;name&quot;&gt;&lt;/input&gt;
+    &lt;br&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;next&quot;&gt;&lt;input&gt;
+&lt;/form&gt;
+</code></pre>
+<p>関数を追加します．
+少しわかりづらいですが，ここはスタート画面からの POST を受け取って名前入力画面を返す部分なので，まだ特に情報は送られてきません．
+<code>Target</code> の設定に注意してください．</p>
+<p><span class="filename">formapp.go/service/stateless/handler.go</span></p>
+<pre><code class="language-go">...
+
+func NameForm(ctx *gin.Context) {
+    ctx.HTML(http.StatusOK, &quot;name-form.html&quot;, gin.H{ &quot;Target&quot;: &quot;/stateless/name&quot; })
+}
+</code></pre>
+<p>ルーティングも更新します．</p>
+<p><span class="filename">formapp.go/main.go</span></p>
+<pre><code class="language-go">func main() {
+    ...
+    engine.POST(&quot;/stateless/start&quot;, stateless.NameForm)
+    ...
+}
+</code></pre>
+<p>ここでも一度，動作確認をしてみましょう．</p>
+<h3 id="生年月日入力画面"><a class="header" href="#生年月日入力画面">生年月日入力画面</a></h3>
+<p>ここからは前の画面で入力した情報を状態として引き継いでいく必要があります．</p>
+<p>まずはこれまで通り素直に生年月日入力画面を作ってみましょう．
+ただし，ここからはセッション方式とやや記述内容が異なってくるため，区別できるようなファイル名としておきます．</p>
+<p><span class="filename">templates/stateless-birthday-form.html</span></p>
+<pre><code class="language-html">&lt;form action=&quot;/stateless/birthday&quot; method=&quot;post&quot;&gt;
+    &lt;label&gt;生年月日: &lt;/label&gt;
+    &lt;input type=&quot;date&quot; name=&quot;birthday&quot; value=&quot;2011-10-22&quot;&gt;&lt;/input&gt;
+    &lt;br&gt;&lt;input type=&quot;submit&quot;&gt;&lt;/input&gt;
+&lt;/form&gt;
+</code></pre>
+<p><code>input[type=date]</code> は日付を扱うための input タグです．
+また，一般に input タグは <code>value=&quot;...&quot;</code> とすることで初期値を設定でき，<code>input[type=date]</code> の場合は <code>&quot;2011-10-22&quot;</code> と記述しておくと 2022年10月22日 が初期値として設定されます．</p>
+<p>さて，ステートレス方式では通信に状態を載せるのですが，このままでは名前情報を載せておく場所がありません．
+状態を引き継ぐためには状態を載せる場所を確保する必要があるため，その場所を <code>input[type=hidden]</code> タグによってつくります．
+上記のテンプレートファイルを以下のように修正します．</p>
+<p><span class="filename">templates/stateless-birthday-form.html</span></p>
+<pre><code class="language-html">&lt;form action=&quot;/stateless/birthday&quot; method=&quot;post&quot;&gt;
+    &lt;label&gt;生年月日: &lt;/label&gt;
+    &lt;input type=&quot;date&quot; name=&quot;birthday&quot; value=&quot;2011-10-22&quot;&gt;&lt;/input&gt;
+    &lt;input type=&quot;hidden&quot; name=&quot;name&quot; value=&quot;{{ .Name }}&quot;&gt;
+    &lt;br&gt;&lt;input type=&quot;submit&quot;&gt;&lt;/input&gt;
+&lt;/form&gt;
+</code></pre>
+<p>変更点は 4 行目です．
+この記述により，生年月日入力画面に名前情報を埋め込むことができました．
+<code>input[type=hidden]</code> は，HTML における通常の input タグのように情報を送信することができますが，Webブラウザ上には表示されません．
+したがって，このように通信に情報を載せるための手段として活用することができます．</p>
+<p>名前入力を受け取り，生年月日入力フォームを返す関数を formapp.go/service/stateless/handler.go へ追加します．
+この関数は /stateless/name への POST を受け取って生年月日入力画面を返す関数なので，以下の 2 つのタスクを実行します．</p>
+<ol>
+<li>リクエストから名前情報を抜き出す</li>
+<li>名前情報を埋め込んだ生年月日入力画面を返す</li>
+</ol>
+<p><span class="filename">formapp.go/service/stateless/handler.go</span></p>
+<pre><code class="language-go">...
+
+func BirthdayForm(ctx *gin.Context) {
+    name, exist := ctx.GetPostForm(&quot;name&quot;)
+    if !exist {
+        ctx.String(http.StatusBadRequest, &quot;parameter 'name' is not provided&quot;)
+    }
+    ctx.HTML(http.StatusOK, &quot;stateless-birthday-form.html&quot;, gin.H{ &quot;Name&quot;: name })
+}
+</code></pre>
+<p>念のためエラー処理 (5--7行目) を挟んでいますが，本質的には POST されたデータから名前情報を抜き取り，templates/stateless-birthday-form.html に埋め込んで Client へ返すという動作を実行するものです．</p>
+<p>ルーティングを更新します．</p>
+<p><span class="filename">formapp.go/main.go</span></p>
+<pre><code class="language-go">func main() {
+    ...
+    engine.POST(&quot;/stateless/name&quot;, stateless.BirthdayForm)
+    ...
+}
+</code></pre>
+<p>ここまでの動作確認を行いましょう．
+前述の通り <code>input[type=hidden]</code> は通常 Webブラウザ 上では表示されません．
+たしかに名前情報が状態として埋め込まれていることを確認するには，HTMLソースを確認する必要があります．
+多くの Webブラウザ では，右クリックで出現するメニューから「ページのソースを表示」などの項目を選択することで，HTMLソースを確認することができます．</p>
+<p>基本的にはこれを繰り返すだけですので，ステートレス方式での残りのページの実装は練習問題とします．
+注意点として，生年月日入力画面では名前情報のみを引き継ぎましたが，メッセージ入力画面では当然ながら名前情報と生年月日情報の2つを引き継がなければなりません．
+すなわち，メッセージ入力画面では <code>input[type=hidden]</code> フィールドが2つ存在することとなります．</p>
+<p>このようにステートレス方式は，扱う情報が増えると情報を引き継ぐためのフィールドが増加し，結果として通信量が増える性質を持っています．
+小さなデータを少しだけ引き継ぐ場合には問題にはなりませんが，大きなデータや大量のデータを引き継ぐには不向きだと言えます．</p>
+<h5 id="練習問題-4-1"><a class="header" href="#練習問題-4-1">練習問題 4-1</a></h5>
+<p>ここまでの内容をもとに，<a href="https://cs-sysdes.github.io/formapp.html">formapp.goの仕様</a>を満たすアプリケーションを開発してみましょう．
+なお，複数行の文字列入力欄は <code>&lt;textarea&gt;</code> タグを使うことで実現できます．</p>
+<h5 id="練習問題-4-2"><a class="header" href="#練習問題-4-2">練習問題 4-2</a></h5>
+<p>追加機能として，各画面に一つ前の画面に戻る「back」ボタンを実装し，前画面での入力を修正できるようにしてみましょう．</p>
+<h2 id="まとめ-3"><a class="header" href="#まとめ-3">まとめ</a></h2>
+<p>今回はWebアプリケーションにおける状態管理について，HTTP通信の制約からくる課題とその解決方法の一つとして「ステートレス方式」を扱いました．
+次回は，もう一つの方法である「セッション方式」について扱います．</p>
+<p>今回の内容は以上になります．
+おつかれさまでした．</p>
 
                     </main>
 
