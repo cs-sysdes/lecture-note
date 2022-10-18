@@ -261,8 +261,6 @@ Connection: keep-alive
 
 ```txt
 POST /login HTTP/1.1
-`<METHOD>`，`<PATH>`，`<VERSION>` はスペース区切りで識別されます．
-したがって，それぞれの項目はスペースを含まない文字列になります．
 HOST: 127.0.0.1
 Accept-Language: en-US,en;q=0.5
 Accept-Encoding: gzip, deflate
