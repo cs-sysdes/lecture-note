@@ -390,12 +390,13 @@ func BirthdayForm(ctx *gin.Context) {
     name, exist := ctx.GetPostForm("name")
     if !exist {
         ctx.String(http.StatusBadRequest, "parameter 'name' is not provided")
+        return
     }
     ctx.HTML(http.StatusOK, "stateless-birthday-form.html", gin.H{ "Name": name })
 }
 ```
 
-念のためエラー処理 (5--7行目) を挟んでいますが，本質的には POST されたデータから名前情報を抜き取り，templates/stateless-birthday-form.html に埋め込んで Client へ返すという動作を実行するものです．
+念のためエラー処理 (5--8行目) を挟んでいますが，本質的には POST されたデータから名前情報を抜き取り，templates/stateless-birthday-form.html に埋め込んで Client へ返すという動作を実行するものです．
 
 ルーティングを更新します．
 
