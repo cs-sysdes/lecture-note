@@ -235,7 +235,7 @@ func (s *Session) GetState() (State, error) {
     }
     state, exist := store[s.ID()]
     if !exist {
-        state := new(State)
+        state = new(State)
         store[s.ID()] = state
     }
     return *state, nil
