@@ -2052,7 +2052,7 @@ func (s *Session) Close() {
 func NameForm(ctx *gin.Context) {
     session, err := NewSession()
     if err != nil {
-        ctx.String(http.StatusInternalError, &quot;Fail to create a new session&quot;)
+        ctx.String(http.StatusInternalServerError, &quot;Fail to create a new session&quot;)
         return
     }
     ctx.SetCookie(&quot;userid&quot;, session.ID(), 600, &quot;/session/&quot;, &quot;localhost:8000&quot;, false, false)
