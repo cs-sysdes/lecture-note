@@ -1,0 +1,614 @@
+<!DOCTYPE HTML>
+<html lang="ja" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>06: タスク管理アプリケーション - CSC.T364 Workshop on System Design -  Web programming</title>
+        <!-- Custom HTML head -->
+<meta name="robots" content="noindex,nofollow,noarchive"/>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="Lecture note for Web programming course 2022 in CSC.T364 Workshop on System Design">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/highlight-line-numbers.css">
+        <link rel="stylesheet" href="theme/custom.css">
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><a href="02_http_and_routing.html">02: HTTP通信とルーティング</a></li><li class="chapter-item expanded "><a href="03_web_application_framework.html">03: Webアプリケーションフレームワーク</a></li><li class="chapter-item expanded "><a href="04_state_management_v1.html">04: HTTP通信における状態管理 (1)</a></li><li class="chapter-item expanded "><a href="05_state_management_v2.html">05: HTTP通信における状態管理 (2)</a></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><a href="06_todolist.html" class="active">06: タスク管理アプリケーション</a></li><li class="chapter-item expanded "><div>07: タスクの作成・編集・削除</div></li><li class="chapter-item expanded "><div>08: 検索機能</div></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">補足資料</li><li class="chapter-item expanded "><a href="XX_reference.html">参考サイト</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">CSC.T364 Workshop on System Design -  Web programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/cs-sysdes/lecture-note" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="06-タスク管理アプリケーション"><a class="header" href="#06-タスク管理アプリケーション">06: タスク管理アプリケーション</a></h1>
+<p>ここからは実践編として簡単なタスク管理アプリケーションの開発に取り組みます．
+開発するアプリケーションの仕様は以下のページにまとめてあります．</p>
+<p><a href="https://cs-sysdes.github.io/todolist.html">https://cs-sysdes.github.io/todolist.html</a></p>
+<p>演習資料では主に基本仕様に関する実装を扱います．
+追加仕様に関しては資料中では扱いませんが，余裕のある人は実装に挑戦してみると良いでしょう．
+また，仕様書に記載のない独自機能やアレンジを加えても構いません．</p>
+<p>今回は特に以下の内容を通して，今後使用するプロジェクト <a href="https://github.com/cs-sysdes/todolist.go">todolist.go</a> の説明と簡単な実装練習を行います．</p>
+<ol>
+<li><a href="#todolistgo-%E6%A6%82%E8%A6%B3">todolist.go 概観</a></li>
+<li><a href="#%E3%82%BF%E3%82%B9%E3%82%AF%E8%A1%A8%E7%A4%BA%E7%94%BB%E9%9D%A2%E3%81%AE%E4%BD%9C%E6%88%90">タスク表示画面の作成</a></li>
+</ol>
+<p>実践編では，基礎編以上に説明を簡略化している部分があります．
+不明点があれば遠慮せず Slack より質問を投げてください．</p>
+<p>基礎編と同様に，提示するコードに関して以下に注意してください．</p>
+<ul>
+<li>package 宣言を省略するなど，ソースコードの一部を抜粋している場合があります．</li>
+<li>表記中の <code>...</code> は特に断らない限りコードの省略を意味します．</li>
+<li>提示したコードの n 行目などと指定した場合は，本資料上での行数を意味しています．
+多くの場合，実際のソースコード上での行数と一致するものではありません．</li>
+</ul>
+<h2 id="todolistgo-概観"><a class="header" href="#todolistgo-概観">todolist.go 概観</a></h2>
+<p>実践編は以下のプロジェクトをベースとして演習を進めます．
+ダウンロードをした上で作業ディレクトリに配置してください．
+ダウンロード方法を忘れた場合は <a href="01_preliminary.html#%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE%E5%8F%96%E5%BE%97">第1回資料</a> を参照してください．</p>
+<p><a href="https://github.com/cs-sysdes/todolist.go">https://github.com/cs-sysdes/todolist.go</a></p>
+<p>ここではこのプロジェクトの構成，主要なファイルとパッケージの役割および内容の簡単な説明を行います．
+コードを書いて開発を進めるようなパートではありませんが，開発を進めるうえで重要な内容ですので，実際にファイルを開いて当該箇所を確認する．あるいはプログラムを起動して動作を確認するなどして下さい．</p>
+<h3 id="アプリケーション構成"><a class="header" href="#アプリケーション構成">アプリケーション構成</a></h3>
+<p>todolist.go は Go言語 で記述された Server-side アプリケーション (app) に加え，データベースとして<a href="https://mysql.com">MySQL</a>を使用しています．
+それぞれのサービスはこれまで通り Docker コンテナ上で動くよう docker-compose.yml に設定を記述していますので，データベースアプリケーションを個別に準備してもらう必要はありません．
+一方で，プログラムは Docker コンテナに依存しないよう記述しているので，適切に環境設定を行えばローカルで動かすことも可能です．</p>
+<p>アプリケーションの全体構成を以下に示します．</p>
+<p><img src="img/todolist_structure.png" alt="todolist.go: application structure" /></p>
+<p>Go言語で記述された Server-side アプリケーション (app) が Docker 上で動いており，これが Client-side アプリケーションと通信を行って目的の処理を実行する点はこれまでと変わりません．
+アプリケーションを起動した状態でWebブラウザなどから http://localhost:8000 へアクセスすると，タスク管理アプリケーションを使用できます．
+ただし，データベースの初期化などに時間がかかるため，初回起動時のみ <code>docker-compose exec</code> コマンドの反応がやや鈍い場合があります．</p>
+<pre><code class="language-sh">$ cd ~/sysdes/tutorial.go                 # プロジェクトディレクトリは各自の環境で置き換えてください
+$ docker-compose up -d                    # Dockerコンテナの起動
+$ docker-compose exec app go run main.go  # アプリケーションの起動
+</code></pre>
+<p>Server-side アプリケーション (app) と データベース (db) は Docker 上に構築されたネットワークにより接続されています．
+データベース接続に関わる設定やデータベースアクセスのための仕組みはすでに実装済みであり，app から適切なメソッドを通してSQLクエリを発行することで db 内のデータを操作可能です．</p>
+<p>おまけとして db の状態を監視するために <a href="https://docs.phpmyadmin.net/en/latest">phpmyadmin</a> を導入しています．
+Webブラウザから http://localhosty:8080 へアクセスすることでMySQLサーバをブラウザ上で操作可能です．
+データベース内のデータを確認したり，SQLクエリを実行してどのような結果が返ってくるかを確かめたりできますが，演習内で明示的に使用することはありません．</p>
+<p>ここから実装済みのいくつかのファイルおよびパッケージについて説明したのち，アプリケーションを起動して挙動を確認していきます．</p>
+<h3 id="todolistgomaingo"><a class="header" href="#todolistgomaingo">todolist.go/main.go</a></h3>
+<p>todolist.go/main.go はタスク管理アプリケーションのエントリポイントです．
+内容は formapp.go/main.go とほとんど同じなので，相違点のみ説明します．</p>
+<p><span class="filename">todolist.go/main.go</span></p>
+<pre><code class="language-go">func main() {
+    // initialize DB connection
+    dsn := db.DefaultDSN(
+        os.Getenv(&quot;DB_HOST&quot;),
+        os.Getenv(&quot;DB_PORT&quot;),
+        os.Getenv(&quot;DB_USER&quot;),
+        os.Getenv(&quot;DB_PASSWORD&quot;),
+        os.Getenv(&quot;DB_NAME&quot;))
+    if err := db.Connect(dsn); err != nil {
+        log.Fatal(err)
+    }
+    ...
+    // routing
+    engine.Static(&quot;/assets&quot;, &quot;./assets&quot;)
+    engine.GET(&quot;/&quot;, service.Home)
+    engine.GET(&quot;/list&quot;, service.TaskList)
+    engine.GET(&quot;/task/:id&quot;, service.ShowTask) // &quot;:id&quot; is a parameter
+    ...
+</code></pre>
+<p>3～8 行目は，MySQLサーバとの接続に必要な設定を環境変数から読み込む処理です．
+docker-compose.yml 内で Docker コンテナ上における環境変数それぞれの値を設定しています．
+ローカルで動かしたい場合には，適切な環境変数を設定することでプログラムを変更することなく接続先データベースを変更できます．</p>
+<p>9～11 行目においてデータベースとの接続を行っています．
+接続に失敗した場合 <code>err != nil</code> が <code>true</code> となるため，<code>log.Fatal</code> 関数によってプログラムが異常停止します．</p>
+<p>14～17 行目に，初期状態でのルーティングをいくつか設定しています．
+14 行目の <code>engine.Static</code> メソッドは，Go言語 で書かれたプログラムではなく，画像ファイルなどの静的データを扱うための設定です．
+使用したい静的データがあれば，todolist.go/assets ディレクトリ下に配置することで，アクセスが可能になります．</p>
+<p>17 行目の記述はここまでで説明していない Gin の機能ですが，パスの一部をパラメータとして使用する記述法になります．
+たとえばこのように &quot;task/:id&quot; と記述した場合，&quot;:id&quot; の部分は &quot;:id&quot; という文字列そのものに一致するのではなく，&quot;task/1&quot; などのように指定された値を <code>id=1</code> として受け取れるようになります．
+詳細は <a href="#%E3%82%BF%E3%82%B9%E3%82%AF%E8%A1%A8%E7%A4%BA%E7%94%BB%E9%9D%A2%E3%81%AE%E4%BD%9C%E6%88%90">タスク表示画面の作成</a> にて説明します．</p>
+<h3 id="todolistgoservice-パッケージ"><a class="header" href="#todolistgoservice-パッケージ">todolist.go/service パッケージ</a></h3>
+<p>役割は formapp.go/service パッケージと同じです．
+基本的にはルーティングに対応する処理を提供します．</p>
+<p>todolist.go/service/default.go にはルート (&quot;/&quot;) へのアクセスや formapp.go における<a href="04_state_management_v1.html#%E4%BB%AE%E3%83%AB%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E3%81%AE%E8%A8%AD%E5%AE%9A">仮ルーティングの実装</a>に使用した <code>NotImplemented</code> 関数などを定義しています．
+<code>Error</code> 関数はエラー処理を行う際の共通コードを括り出したもので，<code>NotImplemeted</code> 関数内でも使用しています．
+Go言語 ではこのように<strong>関数を返す関数</strong>を使用することで，汎用性の高い処理を部品化し，再利用性を高めることができます．</p>
+<p><span class="filename">todolist.go/service/default.go</span></p>
+<pre><code class="language-go">...
+// Home renders index.html
+func Home(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, &quot;index.html&quot;, gin.H{&quot;Title&quot;: &quot;HOME&quot;})
+}
+
+// NotImplemented renders error.html with 501 Not Implemented
+func NotImplemented(ctx *gin.Context) {
+	msg := fmt.Sprintf(&quot;%s access to %s is not implemented yet&quot;, ctx.Request.Method, ctx.Request.URL)
+	ctx.Header(&quot;Cache-Contrl&quot;, &quot;no-cache&quot;)
+	Error(http.StatusNotImplemented, msg)(ctx)
+}
+
+// Error returns a handler which renders error.html
+func Error(code int, message string) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		ctx.HTML(code, &quot;error.html&quot;, gin.H{&quot;Code&quot;: code, &quot;Error&quot;: message})
+	}
+}
+</code></pre>
+<p>todolist.go/service/task.go は，このアプリケーションの管理するタスクに関わる処理を集めいたファイルです．
+基本仕様 S-1.1 および S-1.2 については，基本的にこのファイルに適切な処理を定義することで実装を進めていきます．</p>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">package service
+
+import (
+	&quot;net/http&quot;
+	&quot;strconv&quot;
+
+	&quot;github.com/gin-gonic/gin&quot;
+	database &quot;todolist.go/db&quot;
+)
+
+// TaskList renders list of tasks in DB
+func TaskList(ctx *gin.Context) {
+	// Get DB connection
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+
+	// Get tasks in DB
+	var tasks []database.Task
+	err = db.Select(&amp;tasks, &quot;SELECT * FROM tasks&quot;) // Use DB#Select for multiple entries
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+
+	// Render tasks
+	ctx.HTML(http.StatusOK, &quot;task_list.html&quot;, gin.H{&quot;Title&quot;: &quot;Task list&quot;, &quot;Tasks&quot;: tasks})
+}
+...
+</code></pre>
+<p>ここでは <code>TaskList</code> 関数の実装について解説を加えます．
+この関数は，&quot;/list&quot; への GET リクエストに対して呼ばれ，データベース中に保存されたタスクを一覧表示します．</p>
+<p>14～18 行目において，データベースへアクセスするための接続を取得しています．
+今後ほとんどの関数で使用するコードなので覚えておいて下さい．</p>
+<p>14 行目で使用している <code>database</code> 識別子はパッケージ名であり，変数名として <code>db</code> を使用したかったので，8 行目の import 宣言にて todolist.go/db パッケージに別名として <code>database</code> を与えています．</p>
+<p>21～26 行目でデータベースからタスクのデータを取り出しています．</p>
+<p>21 行目において取り出したデータを格納するための変数 <code>tasks</code> を定義しています．
+変数 <code>tasks</code> の型は <code>database.Task</code> のスライスであり，<code>database.Task</code> はデータベース中のタスクデータに対応した構造体です (詳細は<a href="#todolistgodb-%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8">後述</a>)．</p>
+<p>22 行目においてSQLクエリを発行し，データを取得しています．
+<code>database.Getconnection</code> 関数によって取得できる変数 <code>db</code> は，<code>sqlx.DB</code> 型の構造体です．
+<code>sqlx.DB.Select</code> メソッドは，データベースから複数のデータを取り出す際に使用するメソッドであり，第1引数としてデータに対応する構造体のスライスを指定することで，<strong>半自動的</strong>に取り出したデータを構造体へ束縛してくれます．
+ここで「半自動的」と書いたのは，構造体宣言時に構造体のフィールドとデータの属性を結びつける<strong>タグ</strong>を付与する必要があるためです．</p>
+<p>22 行目について，<code>err := ...</code> ではなく，<code>err = ...</code> である点に注意してください．
+これは 14 行目においてすでに <code>err</code> 変数が定義されており，かつ，22 行目の <code>err</code> 変数は単体での代入操作を受けているため <code>:=</code> が使用できません．</p>
+<p>29 行目はこれまでと同様に HTML テンプレートを使用してレスポンスを生成するコードです．
+todolist.go/main.go 内の記述を見るとわかるように，今回は HTML テンプレートのディレクトリとして todolist.go/views を指定しています．
+したがって，ここでは todolist.go/views/task_list.html にページタイトルとデータベースから取得したタスクを埋め込み，HTML ページとして返す処理を行います．</p>
+<div class="memo">
+Go言語 の標準パッケージには database/sql というデータベース操作用の機能が存在します．
+github.com/jmoiron/sqlx パッケージは，標準ライブラリの database/sql パッケージを拡張したモジュールであり，内部的には標準ライブラリの機能を使用しています．
+標準ライブラリをそのまま使用しても良いのですが，sqlx の方がより便利な拡張機能を備えており，多くのプロジェクトで採用されています．
+たとえばここに示した構造体への束縛機能も，sqlx で提供される拡張機能です．
+</div>
+<h3 id="todolistgoviews"><a class="header" href="#todolistgoviews">todolist.go/views</a></h3>
+<p>todolist.go/views ディレクトリは formapp.go/templates と同じくHTMLテンプレートを配置するディレクトリです．
+今回はHTMLテンプレートの新たな機能を使用しているため，その部分についてのみ説明を加えます．</p>
+<p>以下に todolist.go/views/task_list.html を示します．
+このテンプレートは複数のタスクを一覧表示するためのものです．</p>
+<p><span class="filename">todolist.go/views/task_list.html</span></p>
+<pre><code class="language-html">{{ template &quot;header&quot; . }}
+&lt;h1&gt;List of tasks&lt;/h1&gt;
+{{ if not .Tasks }}
+&lt;p&gt;登録データがありません．&lt;/p&gt;
+{{ else }}
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;th&gt;ID&lt;/th&gt;
+        &lt;th&gt;タイトル&lt;/th&gt;
+        &lt;th&gt;登録日&lt;/th&gt;
+        &lt;th&gt;状態&lt;/th&gt;
+    &lt;/tr&gt;
+    {{ range $task := .Tasks }}
+    &lt;tr&gt;
+        &lt;td&gt;&lt;a href=&quot;/task/{{ $task.ID }}&quot;&gt;{{ $task.ID }}&lt;/a&gt;&lt;/td&gt;
+        &lt;td&gt;{{ $task.Title }}&lt;/td&gt;
+        &lt;td&gt;{{ $task.CreatedAt }}&lt;/td&gt;
+        &lt;td&gt;{{ if $task.IsDone }}済{{ end }}&lt;/td&gt;
+    &lt;/tr&gt;
+    {{ end }}
+&lt;/table&gt;
+{{ end }}
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>1 行目および 23 行目の記述は，他のテンプレートファイルにおいて定義した部分テンプレートを使用するための記述です．
+ここではそれぞれ <code>&quot;header&quot;</code> と <code>&quot;footer&quot;</code> テンプレートを呼び出していますが，これらはそれぞれ以下のように定義されています．</p>
+<p><span class="filename">todolist.go/views/_header.html</span></p>
+<pre><code class="language-html">{{ define &quot;header&quot; }}
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot;&gt;
+    &lt;title&gt;{{ .Title }} | todolist.go&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;/assets/style.css&quot;&gt;
+    &lt;script type=&quot;text/javascript&quot; src=&quot;/assets/script.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+{{ end }}
+</code></pre>
+<p><span class="filename">todolist.go/views/_footer.html</span></p>
+<pre><code class="language-html">{{ define &quot;footer&quot; }}
+&lt;/body&gt;
+&lt;/html&gt;
+{{ end }}
+</code></pre>
+<p>これらはそれぞれHTML文書の開始部および終了部であり，ほぼどのようなHTMLであっても共通するパーツとなることが多い部分です．
+したがって，このように共有パーツとしてあらかじめ定義しておき，使用時には単純にこれらの定義を呼び出すことで再利用性を高めています．
+一方で，共有パーツはこの他にも比較的自由に定義できますが，todolist.go/views/_header.html のように共有パーツ側に変数が存在する場合，Go言語 プログラム中から呼び出す際に渡すべき変数がわかりづらくなるため，多用は避けるべきかもしれません．</p>
+<p>todolist.go/views/task_list.html の説明に戻ります．</p>
+<p>3 行目や 18 行目では，<code>{{ ... }}</code> の内部で <code>if</code> キーワードによる条件分岐を使用しています．
+同様に，13 行目では <code>range</code> キーワードを使用した繰り返し表現を使用しています．
+またそれぞれの効果範囲は <code>{{ else }}</code> や <code>{{ end }}</code> によって明示されます．</p>
+<p>Go言語 のテンプレート機能では，このように <code>{{ ... }}</code> ブロックを使用することで変数の埋め込みだけでなく条件分岐や簡単なループ表現も扱うことができます．
+これにより生成するHTML文書を柔軟に表現できるようになっています．
+一方で，テンプレート記法はやや独特な文法となっているため，ある程度の慣れが必要かもしれません．
+特に Go言語 とは異なりスコープの区切りをキーワード (<code>{{ end }}</code>など) で指定する方式となっているため，インデントを適切に設定するなどして効果範囲がわかりやすいよう工夫する必要があります．
+慣れるまでは todolist.go/views/task_list.html の書き方を真似すると良いでしょう．</p>
+<p>テンプレート機能のより詳細な使い方は <a href="https://pkg.go.dev/text/template">公式ドキュメント</a> を参照してください．</p>
+<h3 id="todolistgodb-パッケージ"><a class="header" href="#todolistgodb-パッケージ">todolist.go/db パッケージ</a></h3>
+<p>ここからは formapp.go までは扱ってこなかったデータベース周りの話になります．</p>
+<p>todolist.go/db/conn.go は，データベースとの接続まわりをサポートする機能を実装したファイルのため，今後特に編集する必要性は生じないと思います．
+このファイルには <code>GetConnection</code> 関数が定義されており，先にも説明した通りデータベースへのアクセスを行うためにはこの関数を通して <code>sqlx.DB</code> 構造体 (へのポインタ) を取得する必要があることだけ覚えておいてください．
+なお，ファイルの内容自体は非常にオーソドックスな実装ですので，処理の内容は簡単に追うことができるのではないでしょうか．</p>
+<p>一方で，todolist.go/db/entity.go ファイルは，開発を進めるにあたって編集 (機能追加) する機会が多くなるかと思います．
+初期実装を以下に示します．
+初期実装では，データベース内にすでに存在するタスクデータに対応する構造体のみが定義されています．</p>
+<p><span class="filename">todolist.go/db/entity.go</span></p>
+<pre><code class="language-go">package db
+
+// schema.go provides data models in DB
+import (
+	&quot;time&quot;
+)
+
+// Task corresponds to a row in `tasks` table
+type Task struct {
+	ID        uint64    `db:&quot;id&quot;`
+	Title     string    `db:&quot;title&quot;`
+	CreatedAt time.Time `db:&quot;created_at&quot;`
+	IsDone    bool      `db:&quot;is_done&quot;`
+}
+</code></pre>
+<p><a href="#todolistgoservice-%E3%83%91%E3%83%83%E3%82%B1%E3%83%BC%E3%82%B8">serviceパッケージ</a> の説明において，以下のように<strong>構造体のフィールドとデータの属性を結びつけるタグ</strong>について触れました．</p>
+<blockquote>
+<p><code>sqlx.DB.Select</code> メソッドは，データベースから複数のデータを取り出す際に使用するメソッドであり，第1引数としてデータに対応する構造体のスライスを指定することで，<strong>半自動的</strong>に取り出したデータを構造体へ束縛してくれます．
+ここで「半自動的」と書いたのは，構造体宣言時に構造体のフィールドとデータの属性を結びつける<strong>タグ</strong>を付与する必要があるためです．</p>
+</blockquote>
+<p>9～14 行目の構造体の定義において，型の後についている <code class="hljs">`db:&quot;...&quot;`</code> の部分が<strong>タグ</strong>になり，<code>...</code> にデータベース上でのデータの属性名を指定します．
+たとえば 10 行目の <code class="hljs">ID uint64 `db:&quot;id&quot;`</code> は，<code>uint64</code> 型のフィールド <code>ID</code> を，データベース中のタスクテーブル内のデータの <code>id</code> 属性と対応させることを意味します．</p>
+<p>次に，ここで定義した構造体に対応するデータを保存するためのデータベースの設定について説明します．</p>
+<h3 id="データベースのテーブル定義"><a class="header" href="#データベースのテーブル定義">データベースのテーブル定義</a></h3>
+<p>データベースの設定は，todolist.go/docker/db ディレクトリ内に配置しています．
+開発時には主に todolist/docker/db/sql ディレクトリ内のファイルを編集することになるかと思います．</p>
+<p>todolist.go/docker/db/sql/01_create_tables.sql はテーブルの定義を記述したファイルになります．
+初期状態では以下の通りタスクデータを保存する tasks テーブルのみを定義しています．
+データベースに新たなテーブルを追加したい場合には，このファイルを編集するとよいでしょう．</p>
+<p><span class="filename">todolist.go/docker/db/sql/01_create_tables.sql</span></p>
+<pre><code class="language-sql">-- Table for tasks
+DROP TABLE IF EXISTS `tasks`;
+
+CREATE TABLE `tasks` (
+    `id` bigint(20) NOT NULL AUTO_INCREMENT,
+    `title` varchar(50) NOT NULL,
+    `is_done` boolean NOT NULL DEFAULT b'0',
+    `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8mb4;
+</code></pre>
+<p>この定義の通り，タスクは属性として id, title, is_done, created_at を持ちます．
+todolist.go/db/entity.go 内の構造体 <code>Task</code> は，ここに定義したデータの属性名および型と対応するよう定義しています．</p>
+<p>ここに示した定義において，id はデータ登録時に重複しない値が自動で付与されるよう設定しており，このテーブルにおける id の一意性 (同じ id を持つデータが同じテーブル内に存在しない性質) を保証しています．
+また特に指定がなければ，is_done 属性はデフォルト値として false，created_at 属性はデフォルト値として現在時刻が設定されるようにしています．
+したがって，データ登録時に必ず指定しなければいけない属性は title のみということになります．</p>
+<p>todolist.go/docker/db/sql/02_initial_data.sql には，初期データとしていくつかのタスクを登録するためのクエリを記述しています．
+初期データを登録したい場合は，こちらのファイルへデータ登録のためのクエリを追記すると良いでしょう．</p>
+<p><span class="filename">todolist.go/docker/db/sql/02_initial_data.sql</span></p>
+<pre><code class="language-sql">INSERT INTO `tasks` (`title`) VALUES (&quot;sample-task-01&quot;);
+INSERT INTO `tasks` (`title`) VALUES (&quot;sample-task-02&quot;);
+INSERT INTO `tasks` (`title`) VALUES (&quot;sample-task-03&quot;);
+INSERT INTO `tasks` (`title`) VALUES (&quot;sample-task-04&quot;);
+INSERT INTO `tasks` (`title`, `is_done`) VALUES (&quot;sample-task-05&quot;, true);
+</code></pre>
+<p>これら2 つのファイルは，データベースの Docker コンテナをはじめて起動した際に読み込まれ，データベースを構築します．
+したがって，これらのファイルを編集した場合には，編集した結果を反映するために一度データベースを完全に初期化する必要があります．</p>
+<p>初期化処理が必要になったときに再び説明しますが，データベースコンテナを初期化したうえで再起動するには以下のコマンドを実行する必要があります．</p>
+<pre><code class="language-sh">$ docker-compose down --rmi all --volumes --remove-orphans
+$ docker-compose up -d
+</code></pre>
+<h3 id="画面構成"><a class="header" href="#画面構成">画面構成</a></h3>
+<p>プロジェクトの構成を概観したところで，動作確認をしてみましょう．
+まずは Docker コンテナを起動します．
+初回はコンテナイメージのダウンロードおよびビルドを行うため，少し時間がかかります．</p>
+<pre><code class="language-sh">$ docker-compose up -d
+</code></pre>
+<p>前回までとは異なり，今回はこのコマンド 1 つで app, db, phpmyadmin の 3 つのサービスを同時に起動しています．
+app および phpmyadmin は db コンテナを参照するサービスですので，これらの間には依存関係が存在します．
+こうした依存関係は docker-copmpose.yml において自動的に解決するよう設定を記述していますので，特にコンテナの起動順序について気にする必要はありません．</p>
+<p>コンテナが起動したら，以下のコマンドで app を起動します．</p>
+<pre><code class="language-sh">$ docker-compose exec app go run main.go
+</code></pre>
+<p>コマンド自体はこれまでと同様ですが，db コンテナとの接続の関係で反応が鈍い場合があります．
+準備ができたら以下のようなログが表示されますので，気長にお待ちください．</p>
+<pre><code class="language-sh">$ docker-compose exec app go run main.go
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in &quot;debug&quot; mode. Switch to &quot;release&quot; mode in production.
+ - using env:   export GIN_MODE=release
+ - using code:  gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] Loaded HTML Templates (7): 
+        - header
+        - error.html
+        - task_list.html
+        - _header.html
+        - _footer.html
+        - footer
+        - index.html
+
+[GIN-debug] GET    /assets/*filepath         --&gt; github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
+[GIN-debug] HEAD   /assets/*filepath         --&gt; github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (3 handlers)
+[GIN-debug] GET    /                         --&gt; todolist.go/service.Home (3 handlers)
+[GIN-debug] GET    /list                     --&gt; todolist.go/service.TaskList (3 handlers)
+[GIN-debug] GET    /task/:id                 --&gt; todolist.go/service.ShowTask (3 handlers)
+[GIN-debug] Listening and serving HTTP on :8000
+</code></pre>
+<p>app が起動したらWebブラウザから <a href="http://localhost:8000">http://localhost:8000</a> へアクセスし，以下のページが表示されることを確認してください．</p>
+<p><img src="img/todolist_index.png" alt="todolist.go home" /></p>
+<p>表示されている「登録済みタスク一覧」のリンクをクリックすると，以下のページへ遷移します．</p>
+<p><img src="img/todolist_task_list.png" alt="todolist.go task list" /></p>
+<p>このページは登録されているタスクを一覧表示するものです．
+表示に至るまでの処理を追えば，/list に対する GET リクエストが飛ばされ，<code>service.TaskList</code> 関数が実行されて views/task_list.html がレンダリングされた状態となります．</p>
+<p>タスクの一覧表示では，ID にリンクを設定しています．
+それぞれのリンクは /task/:id への GET アクセスを自身のID値を設定して飛ばすよう設定されており，たとえば ID = 1 のリンクをクリックした場合，以下のページに遷移します．</p>
+<p><img src="img/todolist_task_default.png" alt="todolist.go task view (default)" /></p>
+<p>/task/:id への GET アクセスは <code>service.ShowTask</code> 関数を呼び出しますが，現在の実装ではタスクのタイトルのみを文字列で返すプログラムとなっているため，味気ない表示が返されるのみです．
+次のセクションでは，簡単な練習としてこの表示を改善してみます．</p>
+<h2 id="タスク表示画面の作成"><a class="header" href="#タスク表示画面の作成">タスク表示画面の作成</a></h2>
+<p>タスク表示ページの改善を行うにあたり，まずは <code>service.ShwoTask</code> 関数を理解します．</p>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">...
+
+// ShowTask renders a task with given ID
+func ShowTask(ctx *gin.Context) {
+    ...
+	// parse ID given as a parameter
+	id, err := strconv.Atoi(ctx.Param(&quot;id&quot;))
+	if err != nil {
+		Error(http.StatusBadRequest, err.Error())(ctx)
+		return
+	}
+
+	// Get a task with given ID
+	var task database.Task
+	err = db.Get(&amp;task, &quot;SELECT * FROM tasks WHERE id=?&quot;, id) // Use DB#Get for one entry
+	if err != nil {
+		Error(http.StatusBadRequest, err.Error())(ctx)
+		return
+	}
+
+	// Render task
+	ctx.String(http.StatusOK, task.Title)  // Modify it!!
+}
+</code></pre>
+<p>22 行目を修正すべきであることは明らかですが，<strong>パスパラメータ</strong>の仕組みを理解するため上から順に説明します．</p>
+<p>ルーティングの設定より，<code>service.ShowTask</code> 関数は /task/:id への GET リクエストに対応する処理です．
+ここで，リクエストパス中の :id の部分はパラメータであり，このようなパスの一部をパラメータとして扱う機能を<strong>パスパラメータ</strong>と呼びます．</p>
+<p>Gin では <code>gin.Context.Param</code> メソッドによって設定されたパスパラメータを受け取ることができます．
+今回は &quot;id&quot; を key とするパラメータが設定されているため，7 行目に示す通り <code>ctx.Param(&quot;id&quot;)</code> と記述することで，:id の部分に指定された値を文字列として取得します．
+ここでは同時に ID が整数値であることを検証するため，<code>strconv.Atoi</code> 関数で文字列から整数値への変換を試しています．
+仮にここで変換に失敗した場合，ID として不正な値が入力されたことを意味するので，BadRequestエラーを返すようエラー処理を実装しています．</p>
+<p>14～19 行目は，指定された ID を持つタスクをデータベースから取得するコードです．
+<code>service.TaskList</code> 関数では複数のタスクを受け取る可能性があったため <code>sqlx.DB.Select</code> メソッドを使用しましたが，今回は結果を 1 つのみ受け取るため <code>sqlx.DB.Get</code> メソッドを使用しています．
+なお，ID の一意性はテーブル定義において保証されているため，<code>SELECT * FROM tasks WHERE id=1</code> などと ID を指定して取得クエリを発行した場合には，必ず 0 または 1 つのデータのみがクエリの結果として返されます．
+もし適合するデータが 0 個の場合，すなわちテーブル内に存在しない場合，<code>err != nil</code> となりエラー処理が実行されます．</p>
+<p>このままではタイトルが文字列で表示されるだけのページとなってしまうため，まずはページのテンプレートを用意します．
+適当なファイルとして task.html をtodolist.go/views ディレクトリ下に配置し，以下のようなHTMLを記述します．
+なお，ここで示すHTMLテンプレートの内容は実装例であり，好みに応じてアレンジを加えていただいて構いません．</p>
+<p><span class="filename">todolist.go/views/task.html</span></p>
+<pre><code class="language-html">{{ template &quot;header&quot; . }}
+&lt;h1&gt;Task: {{ .Title }}&lt;/h1&gt;
+&lt;dl&gt;
+    &lt;dt&gt;ID&lt;/dt&gt;
+    &lt;dd&gt;{{ .ID }}&lt;/dd&gt;
+    &lt;dt&gt;Created at&lt;/dt&gt;
+    &lt;dd&gt;{{ .CreatedAt }}&lt;/dd&gt;
+    &lt;dt&gt;Status&lt;/dt&gt;
+    &lt;dd&gt;&lt;input type=&quot;checkbox&quot; {{ if .IsDone }}checked {{ end }}disabled/&gt;済&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;a href=&quot;/list&quot;&gt;&lt;button type=&quot;button&quot;&gt;リストへ戻る&lt;/button&gt;&lt;/a&gt;
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>このHTMLテンプレートを呼び出すよう，<code>service.ShowTask</code> 関数の最終行を修正します．</p>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">    ...
+	// Render task
+	//ctx.String(http.StatusOK, task.Title)  // Modify it!!
+    ctx.HTML(http.StatusOK, &quot;task.html&quot;, task)
+}
+</code></pre>
+<p>ここでは <code>gin.H</code> を利用して連想配列をテンプレートへ渡すのではなく，<code>task</code> 変数を直接渡しています．
+Go言語 は割と柔軟で，このように記述してもよしなに扱ってくれます．
+ただし，渡す構造体のフィールドすべてが文字列への変換に対応している必要があります．</p>
+<h5 id="練習問題-6-1"><a class="header" href="#練習問題-6-1">練習問題 6-1</a></h5>
+<p>上記の修正を適用し，タスクの表示画面を改善した結果を確認してみましょう．</p>
+<h5 id="練習問題-6-2"><a class="header" href="#練習問題-6-2">練習問題 6-2</a></h5>
+<p>タスク一覧表示画面について，各自の裁量で見やすさなど改善を施してみましょう．</p>
+<h5 id="練習問題-6-3-発展的内容"><a class="header" href="#練習問題-6-3-発展的内容">練習問題 6-3 (発展的内容)</a></h5>
+<p>タスクに簡単な説明文を追加して表示できるようテーブルや構造体の定義，タスク表示画面を拡張してみましょう．
+資料での説明を超える発展的内容であるため，必ずしも取り組む必要はありません．</p>
+<p>【ヒント】</p>
+<ul>
+<li>データベース上では <code>varchar(256)</code> などとすることで，比較的長いテキストのための属性を定義できる．</li>
+<li>テーブル定義などを更新した場合，データベースコンテナの初期化が必要となる．</li>
+</ul>
+<h2 id="まとめ"><a class="header" href="#まとめ">まとめ</a></h2>
+<p>今回は実践編の初回としてベースプロジェクト todolist.go の構成を説明し，簡単なタスク表示ページの実装を行いました．
+次回からは<a href="https://cs-sysdes.github.io/todolist.html">基本仕様</a>に示す機能を段階的に実装し，実用的なタスク管理アプリケーションを構築していきます．</p>
+<p>今回の内容は以上になります．
+お疲れさまでした．</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="05_state_management_v2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="XX_reference.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="05_state_management_v2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="XX_reference.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="theme/highlight-line-numbers.js"></script>
+        <script type="text/javascript" src="theme/custom.js"></script>
+    </body>
+</html>
