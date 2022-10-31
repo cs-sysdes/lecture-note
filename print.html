@@ -81,7 +81,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><a href="02_http_and_routing.html">02: HTTP通信とルーティング</a></li><li class="chapter-item expanded "><a href="03_web_application_framework.html">03: Webアプリケーションフレームワーク</a></li><li class="chapter-item expanded "><a href="04_state_management_v1.html">04: HTTP通信における状態管理 (1)</a></li><li class="chapter-item expanded "><a href="05_state_management_v2.html">05: HTTP通信における状態管理 (2)</a></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><a href="06_todolist.html">06: タスク管理アプリケーション</a></li><li class="chapter-item expanded "><div>07: タスクの作成・編集・削除</div></li><li class="chapter-item expanded "><div>08: 検索機能</div></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">補足資料</li><li class="chapter-item expanded "><a href="XX_reference.html">参考サイト</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><a href="02_http_and_routing.html">02: HTTP通信とルーティング</a></li><li class="chapter-item expanded "><a href="03_web_application_framework.html">03: Webアプリケーションフレームワーク</a></li><li class="chapter-item expanded "><a href="04_state_management_v1.html">04: HTTP通信における状態管理 (1)</a></li><li class="chapter-item expanded "><a href="05_state_management_v2.html">05: HTTP通信における状態管理 (2)</a></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><a href="06_todolist.html">06: タスク管理アプリケーション</a></li><li class="chapter-item expanded "><a href="07_task_management.html">07: タスクの作成・編集・削除</a></li><li class="chapter-item expanded "><div>08: 検索機能</div></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">補足資料</li><li class="chapter-item expanded "><a href="XX_reference.html">参考サイト</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -2589,6 +2589,523 @@ Go言語 は割と柔軟で，このように記述してもよしなに扱っ�
 <h2 id="まとめ-5"><a class="header" href="#まとめ-5">まとめ</a></h2>
 <p>今回は実践編の初回としてベースプロジェクト todolist.go の構成を説明し，簡単なタスク表示ページの実装を行いました．
 次回からは<a href="https://cs-sysdes.github.io/todolist.html">基本仕様</a>に示す機能を段階的に実装し，実用的なタスク管理アプリケーションを構築していきます．</p>
+<p>今回の内容は以上になります．
+お疲れさまでした．</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="07-タスクの作成編集削除"><a class="header" href="#07-タスクの作成編集削除">07: タスクの作成・編集・削除</a></h1>
+<p>今回は以下の手順に従って<a href="https://cs-sysdes.github.io/todolist.html">要求仕様</a>に示された基本仕様 S-1.1 の実装を行います．</p>
+<ol>
+<li><a href="07_task_management.html#%E3%83%AB%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E8%A8%AD%E5%AE%9A">ルーティング設定</a></li>
+<li><a href="07_task_management.html#%E3%82%BF%E3%82%B9%E3%82%AF%E3%81%AE%E6%96%B0%E8%A6%8F%E7%99%BB%E9%8C%B2">タスクの新規登録</a></li>
+<li><a href="07_task_management.html#%E6%97%A2%E5%AD%98%E3%82%BF%E3%82%B9%E3%82%AF%E3%81%AE%E7%B7%A8%E9%9B%86">既存タスクの編集</a></li>
+<li><a href="07_task_management.html#%E6%97%A2%E5%AD%98%E3%82%BF%E3%82%B9%E3%82%AF%E3%81%AE%E5%89%8A%E9%99%A4">既存タスクの削除</a></li>
+</ol>
+<p><a href="06_todolist.html">前回</a>から引き続いて <a href="https://github.com/cs-sysdes/todolist.go">todolist.go</a> での実装を進めます．</p>
+<h2 id="ルーティング設定"><a class="header" href="#ルーティング設定">ルーティング設定</a></h2>
+<p>それぞれの機能について仮ルーティングを行います．</p>
+<p>まず，タスクの新規登録について一般的な処理のフローを以下に示します．</p>
+<p><img src="img/register_task.png" alt="Flow to register a new task" /></p>
+<p>タスクを新規登録するため，Client-side アプリケーションは Server-side アプリケーションに対して登録フォームを要求します．
+このリクエストは登録フォームという画面を表示させることを目的とするので，通常は GET リクエストになります．
+このとき，Server-side アプリケーションの動作としては，登録フォームを備えた画面を返すことが期待されます．</p>
+<p>ユーザは表示された登録フォームに登録するタスクの情報を入力し，Server-side アプリケーションへ送信します．
+これは情報の送信を目的とするため，通常は POST リクエストになるでしょう．
+Server-side アプリケーションは，受け取った情報から DB 内に新規タスクを保存し，完了したことを Client-side へ通知します．</p>
+<p>以上より，タスクの新規登録には 1 つの GET メソッドと 1 つの POST メソッドを受け付けるルーティングが必要そうです．
+「新たなタスク」に関連する処理なので，パスは /task/new などで良いでしょう．</p>
+<hr />
+<p>同様に，タスクの編集について一般的な処理のフローを示します．</p>
+<p><img src="img/edit_task.png" alt="Flow to edit an existing task" /></p>
+<p>タスクの新規登録フローとほとんど同じですが，編集作業は「特定のタスク」に対する操作なので，編集フォームを要求する最初の GET リクエストには編集対象を指定するための ID を指定できるようにするべきでしょう．
+Server-side アプリケーションは Client-side からの編集フォームの表示要求に対し，指定されたタスクを DB から取得したうえでフォーム中にタスクの情報を埋め込んで返すことが期待されます．</p>
+<p>編集後の情報送信はいつも通り POST リクエストで行います．
+Server-side アプリケーションは，リクエストに従って DB 内データを更新し，完了通知を返信することが期待されます．</p>
+<p>以上より，タスクの編集も 1 つの GET メソッドと 1 つの POST メソッドを受け付けるルーティングを設定することとします．
+このとき，タスクの新規登録時とは異なり，タスクの編集フォーム取得のための GET リクエストはパラメータ (ID) を持つことになります．
+「タスクの編集」に関連する処理なので，パスは /task/edit などとしましょう．
+ただし，パラメータとしてタスクの ID を受け取るため，/task/edit/:id とする方が良さそうです．</p>
+<hr />
+<p>タスクの削除フローは，以下に示す通り先の 2 つより単純です．</p>
+<p><img src="img/delete_task.png" alt="Flow to delete an existing task" /></p>
+<p>Client-side アプリケーションは Server-side アプリケーションに削除したいタスクの ID を通知します．
+Server-side アプリケーションは受け取った ID に該当するタスクを DB 上から削除し，処理の完了通知を返信します．</p>
+<p>この操作では特に情報を送信することはないため，GET リクエストで削除指示を直接送ることとします．
+また，パラメータとして ID を持つ「タスクの削除」に関連する処理なので，パスは /task/delete/:id で良いでしょう．</p>
+<hr />
+<p>以上の設計方針を素直に実装すると以下のようになります．</p>
+<p><span class="filename">todolist.go/main.go</span></p>
+<pre><code class="language-go">    ...
+    // タスクの新規登録
+    engine.GET(&quot;/task/new&quot;, service.NotImplemented)
+    engine.POST(&quot;/task/new&quot;, service.NotImplemented)
+    // 既存タスクの編集
+    engine.GET(&quot;/task/edit/:id&quot;, service.NotImplemented)
+    engine.POST(&quot;/task/edit/:id&quot;, service.NotImplemented)
+    // 既存タスクの削除
+    engine.GET(&quot;/task/delete/:id&quot;, service.NotImplemented)
+    ...
+</code></pre>
+<p>この仮ルーティングの設定は一般的な実装例であり，必ずしもこの通りに実装する必要はありません．
+本資料ではこのルーティング設定に従って実装を進めますが，明確な目的や理由をもって独自のルーティングを行うことを妨げるものではありません．</p>
+<div class="memo">
+タスクの編集において，編集後の情報を POST メソッドで送信すると説明しましたが，実際は処理の内容を考えると <b>PUT</b> (あるいは <b>PATCH</b>) リクエストとする方が適切です．
+また，タスクの削除においても本来は <b>DELETE</b> メソッドを使用する方が適切です．
+しかしながら，HTML の form タグはメソッドとして GET か POST にしか対応しておらず，また HTML 単体では他に PUT や DELETE といったメソッドのリクエストを送信する手段がないため，ここでは POST リクエストとして実装しています．
+どうしても PUT や DELETE でリクエストを送信したい場合は，一般に JavaScript の力を借りることになります．
+</div>
+<h2 id="タスクの新規登録"><a class="header" href="#タスクの新規登録">タスクの新規登録</a></h2>
+<p>タスクの新規登録フローを再掲します (<a href="07_task_management.html#%E3%83%AB%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E8%A8%AD%E5%AE%9A">ルーティング設定</a>にて示したものと同じです)．</p>
+<p><img src="img/register_task.png" alt="Flow to register a new task (re-post)" /></p>
+<p>タスクの新規登録において Server-side アプリケーションに求められる処理は，1) 新規登録リクエストに対して登録フォームを返す，2) POST されたタスク情報から DB に新しいタスクを登録する，の 2 つです．
+それぞれについて順に実装していきます．</p>
+<p>これ以降，タスクの持つフィールドは初期実装を仮定して資料を進めます．
+<a href="06_todolist.html#%E7%B7%B4%E7%BF%92%E5%95%8F%E9%A1%8C-6-3-%E7%99%BA%E5%B1%95%E7%9A%84%E5%86%85%E5%AE%B9">前回の練習問題 6-3</a> などで独自のフィールドを追加している場合は，それらについても入力欄を設定するなど，適宜資料の読み替えが必要となるので注意してください．</p>
+<h3 id="新規登録フォーム"><a class="header" href="#新規登録フォーム">新規登録フォーム</a></h3>
+<p>まずは新しいタスクの情報を入力するための登録画面を作成します．
+以下に示すタスクの初期実装では，新規登録時にユーザが入力すべき項目は <code>Title</code> のみです．
+その他のフィールドは，DB が自動的に適切な値を設定してくれます．</p>
+<p><span class="filename">todolist.go/db/entity.go</span></p>
+<pre><code class="language-go">type Task struct {
+	ID        uint64    `db:&quot;id&quot;`
+	Title     string    `db:&quot;title&quot;`
+	CreatedAt time.Time `db:&quot;created_at&quot;`
+	IsDone    bool      `db:&quot;is_done&quot;`
+}
+</code></pre>
+<p>したがって，以下のような登録画面を作成することとします．
+入力した情報は /task/new へ POST したいので，<code>&lt;form&gt;</code> タグの属性として <code>action=&quot;/task/new&quot;</code> および <code>method=&quot;POST&quot;</code> を指定しています．</p>
+<p><span class="filename">todolist.go/views/form_new_task.html</span></p>
+<pre><code class="language-html">{{ template &quot;header&quot; . }}
+&lt;h1&gt;タスクの新規登録&lt;/h1&gt;
+&lt;form action=&quot;/task/new&quot; method=&quot;POST&quot;&gt;
+    &lt;label&gt;Title&lt;/label&gt;&lt;input type=&quot;text&quot; name=&quot;title&quot; required&gt;
+    &lt;br&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;登録&quot;&gt;
+    &lt;a href=&quot;/list&quot;&gt;&lt;button type=&quot;button&quot;&gt;戻る&lt;/button&gt;&lt;/a&gt;
+&lt;/form&gt;
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>5 行目の <code>&lt;br&gt;</code> タグは改行をいれるためのタグです．
+本来は <code>&lt;div&gt;</code> タグなどを用いて構造化した上で見た目を調整すべきですが，ここでは最低限の機能を最低限の見た目で提供するため，このように記述しています．</p>
+<p>6 行目に配置した「登録」ボタンを押すと，<code>input[name=&quot;title&quot;]</code> フィールドに入力した値を Server へ POST します．
+<code>input[name=&quot;title&quot;]</code> フィールドに付与されている <code>required</code> 属性は，このフィールドを空のまま送信できないよう制約を付けるものです．
+7 行目に配置した「戻る」ボタンは単純に /task/list へのリンクとなっており，新規登録を中止してタスク一覧ページへ戻る機能を提供しています．</p>
+<p><a href="06_todolist.html#%E7%B7%B4%E7%BF%92%E5%95%8F%E9%A1%8C-6-3-%E7%99%BA%E5%B1%95%E7%9A%84%E5%86%85%E5%AE%B9">練習問題 6-3</a> でタスクのフィールドに説明文を追加している場合は，以下のような <code>&lt;textarea&gt;</code> を form の子要素として 6 行目あたりに追加すると良いでしょう．</p>
+<pre><code class="language-html">    &lt;label&gt;Description&lt;/label&gt;
+    &lt;textarea name=&quot;description&quot;&gt;&lt;/textarea&gt;
+</code></pre>
+<p>/task/new への GET リクエストにはこの画面を返せばよいだけなので，以下のような関数 <code>service.NewTaskForm</code> を定義します．
+表示する画面 todolist.go/views/form_new_task.html は <code>{{ template header . }}</code> によってページの &quot;Title&quot; パラメータを要求する点に注意してください．</p>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">...
+func NewTaskForm(ctx *gin.Context) {
+    ctx.HTML(http.StatusOK, &quot;form_new_task.html&quot;, gin.H{&quot;Title&quot;: &quot;Task registration&quot;})
+}
+</code></pre>
+<p>仮ルーティングの設定を更新 (下記 3 行目) し，Webブラウザから /task/new へアクセスしたときにタスクの新規登録フォームが表示されることを確認してください．</p>
+<p><span class="filename">todolist.go/main.go</span></p>
+<pre><code class="language-go">    ...
+    // タスクの新規登録
+    engine.GET(&quot;/task/new&quot;, service.NewTaskForm)
+    engine.POST(&quot;/task/new&quot;, service.NotImplemented)
+    ...
+</code></pre>
+<p>このままでは URL を直接打ち込まないとタスクの新規登録ページへ進むことができないので，どこかのページに新規登録ページへのリンクを設置する必要があります．
+今回は，/list で表示されるタスク一覧の上にリンクを設定することとしましょう．</p>
+<p><span class="filename">todolist.go/views/task_list.html</span></p>
+<pre><code class="language-html">{{ template &quot;header&quot; . }}
+&lt;h1&gt;List of tasks&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&quot;/task/new&quot;&gt;新規登録&lt;/a&gt;&lt;/p&gt;
+{{ if not .Tasks }}
+&lt;p&gt;登録データがありません．&lt;/p&gt;
+{{ else }}
+&lt;table&gt;
+    ...
+</code></pre>
+<p>3 行目の <code>&lt;p&gt;&lt;a href=&quot;/task/new&quot;&gt;新規登録&lt;/a&gt;&lt;/p&gt;</code> が追加したコードになります．
+これでタスクの一覧表示画面から新規登録画面へ遷移可能になりました．</p>
+<h3 id="登録処理"><a class="header" href="#登録処理">登録処理</a></h3>
+<p>タスクの新規登録画面を表示できたので，POST されたフォームデータから新規タスクを登録する関数 <code>service.RegisterTask</code> を実装します．
+POST されたデータを受け取る部分，および，DB への接続を獲得する部分は，これまでの演習より以下の通り記述できることがわかります．</p>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">...
+func RegisterTask(ctx *gin.Context) {
+    // Get task title
+    title, exist := ctx.GetPostForm(&quot;title&quot;)
+    if !exist {
+        Error(http.StatusBadRequest, &quot;No title is given&quot;)(ctx)
+        return
+    }
+	// Get DB connection
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+    // Create new data with given title on DB
+    ...
+</code></pre>
+<p>DB へのデータの登録は INSERT 文で行うことができますが，<code>sqlx.DB</code> には <code>Insert</code> メソッドがありません．
+したがって，<code>sqlx.DB.Exec</code> メソッドを使用して INSERT 文を発行します．</p>
+<pre><code class="language-go">    ...
+    // Create new data with given title on DB
+    result, err := db.Exec(&quot;INSERT INTO tasks (title) VALUES (?)&quot;, title)
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+    // Render status
+    ...
+</code></pre>
+<p>ここまでで POST された情報に基づく新しいタスクを DB へ登録する処理が完了しました．
+最後に処理の完了を通知する部分ですが，単に成功したことだけを通知するページにあまり意味はないので，登録したタスク自体を表示するページへ遷移させましょう．
+つまり，/task/:id へ<strong>リダイレクト</strong>することを考えます．</p>
+<p>ページのリダイレクトはよく使う機能なので，<code>gin.Context.Redirect</code> としてメソッド化されています．
+また，このような特定の処理を行った結果として対応する別のページ (リソース) へリダイレクトする場合には <code>302 Found</code> のステータスが適当です．
+したがって，いまリダイレクトする先のパスを変数 <code>path</code> で与えるとした場合，以下のように実装できます．</p>
+<pre><code class="language-go">    ...
+    // Render status
+    path := ...
+    ctx.Redirect(http.StatusFound, path)
+}
+</code></pre>
+<p>さて，問題はこの変数 <code>path</code> をどのように設定するかです．
+リダイレクトしたい先のパスは /task/:id であり，:id の部分は今さっき登録した新しいタスクの ID となっているべきです．
+今さっき登録した新しいタスクの ID は DB が自動で割当てているため，これを取得する必要があります．</p>
+<p>であれば，もう一度 DB にアクセスして最新の ID を取得して…という方法は残念ながら<strong>正しく動かない可能性があります</strong>．
+たとえば，2 つ以上のタスクがほぼ同時に登録された場合，1 つの INSERT 文とそれに対応する ID 取得処理がアトミックに実行されれば問題ありませんが，それらの間に別のINSERT 文の実行が挟まってしまった場合，取得できる ID は最後に登録されたタスクの ID となってしまうため，1 つめの INSERT 文で登録されたタスクの ID  ではなくなります．</p>
+<p>一部の DB アプリケーションはこうした要求に対応するため，特定のクエリによって挿入されたデータの ID を返す機能を持っています．
+Go言語 の database/sql パッケージはこうした機能に対応できるよう設計されており，MySQL を使用する場合は，<code>sql.Result.LastInsertId</code> メソッドによって対応するデータの ID を取得可能です．
+<code>sql.Result</code> は先ほど <code>result, err := db.Exec(...)</code> にて <code>result</code> として返されているため，<code>result.LastInsertId()</code> とすることで ID を取得します．</p>
+<p><code>sql.Result.LastInsertId</code> は失敗する可能性のある処理 (<code>err</code> を返すメソッド) です．
+成功した場合 (<code>err == nil</code> の場合) には取得した ID に基づいて /task/:id へ遷移するよう実装します．
+一方で，失敗した場合 (<code>err != nil</code> の場合) には ID を取得することができないので，あきらめて /list へ戻ることとします．</p>
+<p>以上をプログラムとして実装すると以下のようになります．
+3 行目の条件分岐は，エラーがない場合に実行したい処理なので，いつもの <code>err != nil</code> ではなく <code>err == nil</code> であることに注意してください．</p>
+<pre><code class="language-go">    // Render status
+    path := &quot;/list&quot;  // デフォルトではタスク一覧ページへ戻る
+    if id, err := result.LastInsertId(); err == nil {
+        path = fmt.Sprintf(&quot;/task/%d&quot;, id)   // 正常にIDを取得できた場合は /task/&lt;id&gt; へ戻る
+    }
+    ctx.Redirect(http.StatusFound, path)
+}
+</code></pre>
+<p>ここまでをまとめると，<code>service.RegisterTask</code> 関数は以下のように実装できます．</p>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">...
+func RegisterTask(ctx *gin.Context) {
+    // Get task title
+    title, exist := ctx.GetPostForm(&quot;title&quot;)
+    if !exist {
+        Error(http.StatusBadRequest, &quot;No title is given&quot;)(ctx)
+        return
+    }
+	// Get DB connection
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+    // Create new data with given title on DB
+    result, err := db.Exec(&quot;INSERT INTO tasks (title) VALUES (?)&quot;, title)
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+    // Render status
+    path := &quot;/list&quot;  // デフォルトではタスク一覧ページへ戻る
+    if id, err := result.LastInsertId(); err == nil {
+        path = fmt.Sprintf(&quot;/task/%d&quot;, id)   // 正常にIDを取得できた場合は /task/&lt;id&gt; へ戻る
+    }
+    ctx.Redirect(http.StatusFound, path)
+}
+</code></pre>
+<p>ルーティング設定を更新し，タスクが正常に登録できることを確認してください．</p>
+<div class="memo">
+<code class="hljs">sql.Result.LastInsertId</code> メソッドは，使用する DB アプリケーションによっては対応していません．
+今回は対応している MySQL を使用したため，このメソッドを利用して簡単に ID を取得できましたが，MySQL と並んで有名な PostgreSQL を使用した場合にはこのメソッドを利用できません．
+代わりに PostgreSQL には INSERT 後のデータを直接 INSERT 文から返す方法があり，それを使用することで同様の処理は実行可能です．
+</div>
+<h2 id="既存タスクの編集"><a class="header" href="#既存タスクの編集">既存タスクの編集</a></h2>
+<p>既存タスクの編集フローを再掲します (<a href="07_task_management.html#%E3%83%AB%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E8%A8%AD%E5%AE%9A">ルーティング設定</a>にて示したものと同じです)．</p>
+<p><img src="img/edit_task.png" alt="Flow to edit an existing task (re-post)" /></p>
+<p>既存タスクの編集において Server-side アプリケーションに求められる処理は，1) 編集リクエストに応じて対応するタスクの編集フォームを返す，2) POST されたタスク情報から DB 内のデータを更新する，の 2 つです．
+それぞれについて順に実装していきます．</p>
+<h3 id="編集フォーム"><a class="header" href="#編集フォーム">編集フォーム</a></h3>
+<p>編集フォーム画面を取得するためのリンクを作成します．
+今回はタスクの個別表示ページに編集ボタンを追加する方法をとります．</p>
+<p><span class="filename">todolist.go/views/task.html</span></p>
+<pre><code class="language-html">{{ template &quot;header&quot; . }}
+&lt;h1&gt;Task {{ .ID }}&lt;/h1&gt;
+&lt;dl&gt;
+    &lt;dt&gt;Title&lt;/dt&gt;
+    &lt;dd&gt;{{ .Title }}&lt;/dd&gt;
+    &lt;dt&gt;Created at&lt;/dt&gt;
+    &lt;dd&gt;{{ .CreatedAt }}&lt;/dd&gt;
+    &lt;dt&gt;Status&lt;/dt&gt;
+    &lt;dd&gt;&lt;input type=&quot;checkbox&quot; {{ if .IsDone }}checked {{ end }}disabled/&gt;済&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;a href=&quot;/list&quot;&gt;&lt;button type=&quot;button&quot;&gt;リストへ戻る&lt;/button&gt;&lt;/a&gt;
+&lt;a href=&quot;/task/edit/{{ .ID }}&quot;&gt;&lt;button type=&quot;button&quot;&gt;編集&lt;/button&gt;&lt;/a&gt;
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>これは<a href="06_todolist.html#%E3%82%BF%E3%82%B9%E3%82%AF%E8%A1%A8%E7%A4%BA%E7%94%BB%E9%9D%A2%E3%81%AE%E4%BD%9C%E6%88%90">前回作成したタスク表示画面</a>に対し，12 行目に配置した編集ボタンを追加したものです．</p>
+<p>次に，編集フォーム画面を作成します．
+編集フォームはタスク表示画面や新規登録フォームとほとんど同じように実装できます．
+ただし，新規登録フォームではタスクの Title のみ入力可能でしたが，編集フォームでは Title に加えてタスクの完了状態も編集できる必要があります．
+ここでは編集フォーム画面を todolist.go/views/form_edit_task.html として以下のように実装するととします．</p>
+<p><span class="filename">todolist.go/views/form_edit_task.html</span></p>
+<pre><code class="language-html">{{ template &quot;header&quot; . }}
+&lt;h1&gt;Task {{ .Task.ID }}: edit&lt;/h1&gt;
+&lt;form action=&quot;/task/edit/{{ .Task.ID }}&quot; method=&quot;POST&quot;&gt;
+    &lt;label&gt;Title&lt;/label&gt;&lt;input type=&quot;text&quot; name=&quot;title&quot; value=&quot;{{ .Task.Title }}&quot; required&gt;
+    &lt;br&gt;
+    &lt;input type=&quot;radio&quot; name=&quot;is_done&quot; value=&quot;t&quot; {{ if .Task.IsDone }}checked{{ end }}&gt;&lt;label&gt;完了&lt;/label&gt;
+    &lt;input type=&quot;radio&quot; name=&quot;is_done&quot; value=&quot;f&quot; {{ if not .Task.IsDone }}checked{{ end }}&gt;&lt;label&gt;未完了&lt;/label&gt;
+    &lt;/br&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;登録&quot;&gt;
+    &lt;a href=&quot;/task/{{ .Task.ID }}&quot;&gt;&lt;button type=&quot;button&quot;&gt;戻る&lt;/button&gt;&lt;/a&gt;
+&lt;/form&gt;
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>4行目，<code>input[name=&quot;title&quot;]</code> で Title の入力フィールを作成するのは新規登録画面と同じですが，編集時にはすでに設定された Title が存在するため，<code>value=&quot;{{ .Task.Title }}&quot;</code> として登録済みの値をフィールド内に挿入した状態でフォームを返しています．</p>
+<p>6, 7 行目はタスクの完了状態をラジオボタンで表現しています．
+<code>input[type=&quot;radio&quot;]</code> は <code>name</code> 属性が同じ複数の入力フィールドを自動的にグループ化し，排他的に選択できるようになっています．
+<code>checked</code> 属性をつけることで選択された状態にできるため，ここでは編集前のタスクの状態に応じて適切なものに <code>checked</code> 属性を設定しています．</p>
+<p>9, 10 行目の処理は新規登録画面と同様です．
+ただし，ここでは「戻る」ボタンの遷移先として /task/:id を指定しています．</p>
+<p>この画面を返す処理を行う関数 <code>service.EditTaskForm</code> を実装します．</p>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">...
+func EditTaskForm(ctx *gin.Context) {
+    // ID の取得
+    id, err := strconv.Atoi(ctx.Param(&quot;id&quot;))
+    if err != nil {
+        Error(http.StatusBadRequest, err.Error())(ctx)
+        return
+    }
+	// Get DB connection
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+    // Get target task
+    var task database.Task
+    err = db.Get(&amp;task, &quot;SELECT * FROM tasks WHERE id=?&quot;, id)
+    if err != nil {
+        Error(http.StatusBadRequest, err.Error())(ctx)
+        return
+    }
+    // Render edit form
+    ctx.HTML(http.StatusOK, &quot;form_edit_task.html&quot;,
+        gin.H{&quot;Title&quot;: fmt.Sprintf(&quot;Edit task %d&quot;, task.ID), &quot;Task&quot;: task})
+}
+</code></pre>
+<p>ルーティング設定を更新し，動作確認をします．</p>
+<p><span class="filename">todolist.go/main.go</span></p>
+<pre><code class="language-go">    ...
+    // 既存タスクの編集
+    engine.GET(&quot;/task/edit/:id&quot;, service.EditTaskForm)
+    engine.POST(&quot;/task/edit/:id&quot;, service.NotImplemented)
+    ...
+</code></pre>
+<p>確認点は，以下の通りです．</p>
+<ol>
+<li>個別のタスクを表示したときに「編集」ボタンが表示される</li>
+<li>「編集」ボタンを押すと編集フォームが表示される</li>
+<li>編集フォーム上で「更新」を押すと，処理が実装されていないため，エラーページが表示される</li>
+</ol>
+<h3 id="更新処理"><a class="header" href="#更新処理">更新処理</a></h3>
+<p>タスクの更新処理はタスクの新規登録処理とほとんど同じです．
+したがって，更新処理の実装は練習問題とします．</p>
+<h5 id="練習問題-7-1"><a class="header" href="#練習問題-7-1">練習問題 7-1</a></h5>
+<p>新規登録処理を行う <code>service.RegisterTask</code> 関数を参考に，更新処理を行う関数 <code>service.UpdateTask</code> を実装し，ルーティング設定を修正したうえで動作確認をしてください．</p>
+<p>～実装のヒント～</p>
+<ul>
+<li>更新対象の ID は <code>gin.Context.Param</code> で取得できます．</li>
+<li>編集フォームから POST されるデータは，<code>&quot;title&quot;</code> および <code>&quot;is_done&quot;</code> の 2 つです．これらの key に対応する値を <code>gin.Context.GetPostForm</code> メソッドで取得します．
+<ul>
+<li><code>&quot;is_done&quot;</code> に対応する value は，<code>strconv.ParseBool</code> 関数で bool 値に変換できます．</li>
+</ul>
+</li>
+<li>DB 内に存在するデータの更新は UPDATE 文によって行います．
+<ul>
+<li>UPDATE 文は INSERT 文と同様に <code>sql.DB.Exec</code> メソッドで実行します．</li>
+<li>WHERE 句で更新対象の ID を指定することで，対象のタスクのみをアップデートします．</li>
+</ul>
+</li>
+</ul>
+<h2 id="既存タスクの削除"><a class="header" href="#既存タスクの削除">既存タスクの削除</a></h2>
+<p>既存タスクの削除フローを再掲します (<a href="07_task_management.html#%E3%83%AB%E3%83%BC%E3%83%86%E3%82%A3%E3%83%B3%E3%82%B0%E8%A8%AD%E5%AE%9A">ルーティング設定</a>にて示したものと同じです)．</p>
+<p><img src="img/delete_task.png" alt="Flow to delete an existing task (re-post)" /></p>
+<p>既存タスクの削除において Server-side アプリケーションに求められる処理は，削除リクエストに応じて対応するタスクを DB 上から削除することです．
+一般にデータの削除を行う方法には，1) データを完全に消去する方法，2) データに削除フラグを立てる方法，の 2 つが考えられます．
+ここでは 1) データを完全に消去する方法で既存タスクの削除処理を実装します．</p>
+<h3 id="削除リクエストの送信"><a class="header" href="#削除リクエストの送信">削除リクエストの送信</a></h3>
+<p>はじめに，削除リクエストを送信する方法を考えます．
+削除リクエストは /task/delete/:id への GET リクエストとしてルーティングされているため，<code>form[method=&quot;GET&quot;]</code> あるいは <code>&lt;a&gt;</code> タグでリクエストを送信することができます．
+今回は簡単のため <code>&lt;a&gt;</code> タグによる通常のページリクエストとして送信することとします．</p>
+<p><a href="07_task_management.html#%E7%B7%A8%E9%9B%86%E3%83%95%E3%82%A9%E3%83%BC%E3%83%A0">編集フォーム</a>をリクエストしたときと同様に，タスク表示ページから削除リクエストを飛ばせるようにしましょう．
+すなわち，todolist.go/views/task.html に削除リクエストを送信するためのボタンを追加します．</p>
+<p><span class="filename">todolist.go/views/task.html</span></p>
+<pre><code class="language-html">{{ template &quot;header&quot; . }}
+&lt;h1&gt;Task {{ .ID }}&lt;/h1&gt;
+&lt;dl&gt;
+    &lt;dt&gt;Title&lt;/dt&gt;
+    &lt;dd&gt;{{ .Title }}&lt;/dd&gt;
+    &lt;dt&gt;Created at&lt;/dt&gt;
+    &lt;dd&gt;{{ .CreatedAt }}&lt;/dd&gt;
+    &lt;dt&gt;Status&lt;/dt&gt;
+    &lt;dd&gt;&lt;input type=&quot;checkbox&quot; {{ if .IsDone }}checked {{ end }}disabled/&gt;済&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;a href=&quot;/list&quot;&gt;&lt;button type=&quot;button&quot;&gt;リストへ戻る&lt;/button&gt;&lt;/a&gt;
+&lt;a href=&quot;/task/edit/{{ .ID }}&quot;&gt;&lt;button type=&quot;button&quot;&gt;編集&lt;/button&gt;&lt;/a&gt;
+&lt;a href=&quot;/task/delete/{{ .ID }}&quot;&gt;&lt;button type=&quot;button&quot;&gt;削除&lt;/button&gt;&lt;/a&gt;
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>13 行目に削除ボタンを追加しています．
+<code>&lt;button&gt;</code> タグ自体にはリクエストの送信機能がないため，<code>&lt;a&gt;</code> タグで囲って GET リクエストを送信できるようにしています．</p>
+<h3 id="指定されたタスクの削除処理"><a class="header" href="#指定されたタスクの削除処理">指定されたタスクの削除処理</a></h3>
+<p>リクエストを受けて指定されたタスクを削除する処理を <code>service.DeleteTask</code> 関数として実装します．
+処理の手順としては，以下の通りになります．
+タスクの新規登録および編集の際には，タスクページへのリダイレクトを設定しましたが，タスクの削除では遷移先ページとなるべきタスクページ (/task/:id) が存在しないため，タスクの一覧ページ (/list) へ戻るようにしています．</p>
+<ol>
+<li>削除リクエストは /task/delete/:id への GET リクエストなので，削除する対象のタスクの ID をパラメータとして取得</li>
+<li>DB へ削除クエリを送信</li>
+<li>/list へ戻る (Redirect)</li>
+</ol>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">func DeleteTask(ctx *gin.Context) {
+    // ID の取得
+    id, err := strconv.Atoi(ctx.Param(&quot;id&quot;))
+    if err != nil {
+        Error(http.StatusBadRequest, err.Error())(ctx)
+        return
+    }
+	// Get DB connection
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+    // Delete the task from DB
+    _, err = db.Exec(&amp;task, &quot;DELETE FROM tasks WHERE id=?&quot;, id)
+    if err != nil {
+        Error(http.StatusInternalServerError, err.Error())(ctx)
+        return
+    }
+    // Redirect to /list
+    ctx.Redirect(http.StatusFound, &quot;/list&quot;)
+}
+</code></pre>
+<p>ルーティングを更新し，動作確認を行なってみましょう．</p>
+<p><span class="filename">todolist.go/main.go</span></p>
+<pre><code class="language-go">    ...
+    // 既存タスクの削除
+    engine.GET(&quot;/task/delete/:id&quot;, service.DeleteTask)
+    ...
+</code></pre>
+<h3 id="発展削除リクエスト送信時に確認画面を表示"><a class="header" href="#発展削除リクエスト送信時に確認画面を表示">【発展】削除リクエスト送信時に確認画面を表示</a></h3>
+<p><strong>この項目は JavaScript の記述を必要とする発展的内容です．必ずしも実装する必要はありません．</strong></p>
+<p>削除リクエストを送信してタスクを削除することが可能になりましたが，現状では削除ボタンを押すと即座に削除処理が実行されてしまうためユーザに対してやや不親切です．
+実際，多くの実用的なアプリケーションでは，データの削除など重要な処理の実行を行う際には<strong>確認ダイアログ</strong>を表示し，確認がとれてはじめて処理を実行するような仕組みが提供されています．</p>
+<p>ここではそのような確認ダイアログを Client-side アプリケーションである Web ブラウザ上で表示し，確認作業を行なった上で削除リクエストを送信する方法を実装します．
+Web ブラウザ上での処理であるため，当然 Server-side アプリケーションの側で情報を受け取って何か処理をして結果を返すなどという処理はできません．
+確認作業を Web ブラウザ上で完結させるため，JavaScript を用いて HTML 文書中に処理の記述を行う必要があります．
+HTML 文書中に処理を記述するため，ここでは todolist.go/views/task.html のみを変更して対処することとします．</p>
+<p>まずは，削除ボタンを押したときに即座に GET リクエストを送信してしまう現在の動作を修正します．
+todolist.go/views/task.html を開き，13 行目に追加した削除ボタンを囲んでいる <code>&lt;a&gt;</code> タグを削除します．
+代わりに，<code>&lt;button&gt;</code> タグに <code>onclick</code> 属性を設定し，クリックされたときに対象の ID を引数として <code>confirm_delete</code> 関数を呼び出すよう設定します．
+ここまでの修正を施した状態が以下のコードになります．</p>
+<p><span class="filename">todolist.go/views/task.html</span></p>
+<pre><code class="language-html">{{ template &quot;header&quot; . }}
+&lt;h1&gt;Task {{ .ID }}&lt;/h1&gt;
+&lt;dl&gt;
+    &lt;dt&gt;Title&lt;/dt&gt;
+    &lt;dd&gt;{{ .Title }}&lt;/dd&gt;
+    &lt;dt&gt;Created at&lt;/dt&gt;
+    &lt;dd&gt;{{ .CreatedAt }}&lt;/dd&gt;
+    &lt;dt&gt;Status&lt;/dt&gt;
+    &lt;dd&gt;&lt;input type=&quot;checkbox&quot; {{ if .IsDone }}checked {{ end }}disabled/&gt;済&lt;/dd&gt;
+&lt;/dl&gt;
+&lt;a href=&quot;/list&quot;&gt;&lt;button type=&quot;button&quot;&gt;リストへ戻る&lt;/button&gt;&lt;/a&gt;
+&lt;a href=&quot;/task/edit/{{ .ID }}&quot;&gt;&lt;button type=&quot;button&quot;&gt;編集&lt;/button&gt;&lt;/a&gt;
+&lt;button type=&quot;button&quot; onclick=&quot;confirm_delete({{ .ID }})&quot;&gt;削除&lt;/button&gt;
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>ここまでは削除ボタンを押したときに特定の関数を呼び出す仕組みの実装になります．
+したがって，次は呼び出される関数を JavaScript で記述していきます．</p>
+<p>JavaScript を HTML 文書中に記述するには，<code>&lt;script&gt;</code> タグを使用します．
+<code>&lt;script&gt;</code> タグには，内部に記述されたものについて解釈の方法を指定する <code>type</code> 属性があり，JavaScript のプログラムとして解釈してほしい場合には <code>type=&quot;text/javascript&quot;</code> を指定します．
+todolist.go/views/task.html に <code>&lt;script&gt;</code> タグを配置して <code>confirm_delete</code> 関数を定義します．
+ここではとりあえずの動作確認として，削除ボタンが押されたことを通知するポップアップを出してみます．</p>
+<p><span class="filename">todolist.go/views/task.html</span></p>
+<pre><code class="language-html">...
+&lt;a href=&quot;/task/edit/{{ .ID }}&quot;&gt;&lt;button type=&quot;button&quot;&gt;編集&lt;/button&gt;&lt;/a&gt;
+&lt;button type=&quot;button&quot; onclick=&quot;confirm_delete({{ .ID }})&quot;&gt;削除&lt;/button&gt;
+&lt;script type=&quot;text/javascript&quot;&gt;
+    const confirm_delete = (id) =&gt; {
+        alert(`Task ${id} の削除ボタンが押されました！`);
+    }
+&lt;/script&gt;
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>この状態で動作確認を行ってみましょう．
+適当なタスクを表示し，削除ボタンを押したときに通知が表示されれば成功です．
+使用環境によっては JavaScript が有効化されていない場合がありますので，うまく動作しない場合は Web ブラウザの設定から JavaScript が有効化されているかを確認してください．</p>
+<p>それでは実際に確認画面を表示し，確認が取れた場合のみ削除リクエストを送信する処理を記述します．
+JavaScirpt で確認画面を表示するには，<code>window.confirm</code> 関数を使用します．
+<code>window.confirm</code> は通知と共に「OK」または「キャンセル」のボタンを表示し，OK が押された場合は <code>true</code>，キャンセルが押された場合は <code>false</code> を返す関数です．
+なお，それぞれのボタンの文言は環境によって異なりますので，適宜読み替えてください．</p>
+<p>確認が取れた場合のみ削除リクエストを送信するには，<code>window.confirm</code> 関数の戻り値によって条件分岐し，戻り値が <code>true</code> の場合のみリクエストを送信します．
+パスを指定して GET リクエストを送信するには，<code>location.href</code> フィールドの書き変えを行うのが一般的ですので，今回の場合は <code class="hljs">location.href=`/task/delete/${id}`</code> と記述することになります．</p>
+<p>まとめると，以下のような実装になります．</p>
+<p><span class="filename">todolist.go/views/task.html</span></p>
+<pre><code class="language-html">...
+&lt;script type=&quot;text/javascript&quot;&gt;
+    const confirm_delete = (id) =&gt; {
+        if(window.confirm(`Task ${id} を削除します．よろしいですか？`)) {
+            location.href = `/task/delete/${id}`;
+        }
+    }
+&lt;/script&gt;
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>このままでも目的とする動作は実現できていますが，せっかくなのでもう一段階発展した実装を説明します．</p>
+<p><code>&lt;script&gt;</code> タグはここまでで使用したようにタグ内にプログラムを直接記述して有効化する機能のほかに，外部ファイルをロードして有効化する機能があります．
+たとえば，todolist.go/views/_header.html を参照すると，以下のような記述があります．</p>
+<p><span class="filename">todolist.go/views/_header.html</span></p>
+<pre><code class="language-html">{{ define &quot;header&quot; }}
+&lt;!DOCTYPE html&gt;
+    ...
+    &lt;script type=&quot;text/javascript&quot; src=&quot;/assets/script.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+{{ end }}
+</code></pre>
+<p>これは /assets/script.js というパスで指定されるファイルを読み込む設定です．
+この記述によって，このアプリケーションでは todolist.go/assets/script.js が自動で読み込まれるようになっています．
+したがって，先ほど todolist.go/views/task.html 内に記述した JavaScript のコードをそのまま todolist.go/assets/script.js に移動することで，HTML 文書と JavaScript のコードを分離することができます．
+todolist.go/assets/script.js は JavaScript のプログラムファイルなので，<code>&lt;script&gt;</code> タグの記述は不要です．</p>
+<p><span class="filename">todolist.go/assets/script.js</span></p>
+<pre><code class="language-js">const confirm_delete = (id) =&gt; {
+    if(window.confirm(`Task ${id} を削除します．よろしいですか？`)) {
+        location.href = `/task/delete/${id}`;
+    }
+}
+
+const confirm_update = (id) =&gt; {
+    // 練習問題 7-2
+}
+</code></pre>
+<h5 id="練習問題-7-2"><a class="header" href="#練習問題-7-2">練習問題 7-2</a></h5>
+<p>タスクの編集画面には編集内容を確定し送信するボタンが存在します．
+こちらも既存のタスクの内容を書き換えてしまう操作であるため，確認ダイアログを出す方が親切です．
+練習問題として JavaScript で <code>confirm_update</code> 関数を実装し，タスクの編集画面における送信ボタンに対し確認ダイアログを設置してみましょう．</p>
+<h2 id="まとめ-6"><a class="header" href="#まとめ-6">まとめ</a></h2>
+<p>今回はタスク管理アプリケーションとして必要な<a href="https://cs-sysdes.github.io/todolist.html">基本仕様 S-1.1</a> を実装しました．
+発展的内容として JavaScript で確認ダイアログを表示する方法も扱いましたが，これは基本仕様では要求されていない機能なので実装ができていなくても大丈夫です．</p>
+<p>次回は基本仕様 S-1.2 の検索機能を実装する予定です．</p>
 <p>今回の内容は以上になります．
 お疲れさまでした．</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="参考サイト"><a class="header" href="#参考サイト">参考サイト</a></h1>

@@ -24,3 +24,7 @@
     border: solid 1pt var(--quote-border);
     background-color: var(--quote-bg);
 }
+
+.collapse {
+    display: none;
+}
