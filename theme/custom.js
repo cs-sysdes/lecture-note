@@ -14,3 +14,9 @@ for(let elem of elems) {
         elem.setAttribute('target', '_blank');
     }
 }
+
+const toggle_collapse = (id) => {
+    let target = document.getElementById(id);
+    target.classList.toggle('collapse');
+    return false;
+}
