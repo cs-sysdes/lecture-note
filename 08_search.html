@@ -1,0 +1,297 @@
+<!DOCTYPE HTML>
+<html lang="ja" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>08: 検索機能 - CSC.T364 Workshop on System Design -  Web programming</title>
+        <!-- Custom HTML head -->
+<meta name="robots" content="noindex,nofollow,noarchive"/>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="Lecture note for Web programming course 2022 in CSC.T364 Workshop on System Design">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/highlight-line-numbers.css">
+        <link rel="stylesheet" href="theme/custom.css">
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><a href="02_http_and_routing.html">02: HTTP通信とルーティング</a></li><li class="chapter-item expanded "><a href="03_web_application_framework.html">03: Webアプリケーションフレームワーク</a></li><li class="chapter-item expanded "><a href="04_state_management_v1.html">04: HTTP通信における状態管理 (1)</a></li><li class="chapter-item expanded "><a href="05_state_management_v2.html">05: HTTP通信における状態管理 (2)</a></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><a href="06_todolist.html">06: タスク管理アプリケーション</a></li><li class="chapter-item expanded "><a href="07_task_management.html">07: タスクの作成・編集・削除</a></li><li class="chapter-item expanded "><a href="08_search.html" class="active">08: 検索機能</a></li><li class="chapter-item expanded "><div>09: アカウント管理機能 (1)</div></li><li class="chapter-item expanded "><div>10: アカウント管理機能 (2)</div></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">補足資料</li><li class="chapter-item expanded "><a href="XX_reference.html">参考サイト</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">CSC.T364 Workshop on System Design -  Web programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/cs-sysdes/lecture-note" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="08-検索機能とスタイル指定"><a class="header" href="#08-検索機能とスタイル指定">08: 検索機能とスタイル指定</a></h1>
+<p>今回は以下の手順に従って<a href="https://cs-sysdes.github.io/todolist.html">要求仕様</a>に示された基本仕様 S-1.2 の実装を行います．</p>
+<ol>
+<li>検索フォームの設置</li>
+<li>検索処理の追加</li>
+</ol>
+<p>これまでは新たなページを作成し，ルーティング設定を行なった上で対応する処理を実装する手順で機能拡張を行なってきました．
+今回は既存のページにキーワード検索用のフォームを設置し，パスパラメータを用いて検索クエリをサーバへ送信する方法で検索機能の実装を行います．</p>
+<p>ここでは特に<strong>タイトルに特定の文字列が含まれるタスク</strong>を検索対象として検索機能を実装します．
+すなわち，アプリケーションの動作としてユーザが入力したキーワードをタイトルに含むタスクのみを絞り込んで表示する機能を提供します．</p>
+<h2 id="検索フォームの設置"><a class="header" href="#検索フォームの設置">検索フォームの設置</a></h2>
+<p>検索にヒットしたタスクは一覧表示されることが期待されるので，検索フォームもタスクの一覧表示画面に配置されていると良さそうです．
+したがって todolist.go/views/task_list.html に検索フォームを追加することとします．</p>
+<p><span class="filename">todolist.go/views/task_list.html</span></p>
+<pre><code class="language-html">{{ template &quot;header&quot; . }}
+&lt;h1&gt;List of tasks&lt;/h1&gt;
+&lt;form action=&quot;/list&quot; method=&quot;GET&quot;&gt;
+    &lt;input type=&quot;text&quot; name=&quot;kw&quot; value=&quot;{{ .Kw }}&quot;&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;検索&quot;&gt;
+&lt;/form&gt;
+&lt;p&gt;&lt;a href=&quot;/task/new&quot;&gt;新規登録&lt;/a&gt;&lt;/p&gt;
+{{ if not .Tasks }}
+&lt;p&gt;登録データがありません．&lt;/p&gt;
+{{ else }}
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;th&gt;ID&lt;/th&gt;
+        &lt;th&gt;タイトル&lt;/th&gt;
+        &lt;th&gt;登録日&lt;/th&gt;
+        &lt;th&gt;状態&lt;/th&gt;
+    &lt;/tr&gt;
+    {{ range $task := .Tasks }}
+    &lt;tr&gt;
+        &lt;td&gt;&lt;a href=&quot;/task/{{ $task.ID }}&quot;&gt;{{ $task.ID }}&lt;/a&gt;&lt;/td&gt;
+        &lt;td&gt;{{ $task.Title }}&lt;/td&gt;
+        &lt;td&gt;{{ $task.CreatedAt }}&lt;/td&gt;
+        &lt;td&gt;{{ if $task.IsDone }}済{{ end }}&lt;/td&gt;
+    &lt;/tr&gt;
+    {{ end }}
+&lt;/table&gt;
+{{ end }}
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>3～6 行目の <code>&lt;form&gt;</code> タグが今回追加した検索フォームです．
+それ以外の部分はこれまでの実装から変更していません．</p>
+<p>3 行目より，設置した検索フォームは GET リクエストを送信します．
+このフォームは 4 行目の <code>&lt;input&gt;</code> タグで検索キーワードを受け取り，入力されたキーワードを <code>kw=&lt;入力されたキーワード&gt;</code> の形式で<strong>リクエストパス</strong>に載せます．
+したがって，たとえば「test」などと入力して検索ボタンを押した場合，/list?kw=test をパスとする GET リクエストが送信されることになります．</p>
+<p>キーワード入力欄の <code>&lt;input&gt;</code> タグには，value 属性として <code>value=&quot;{{ .Kw }}&quot;</code> を設定しています．
+これは検索処理後の画面遷移時に，指定された検索キーワードを入力欄に残しておくために必要です．
+この記述は必須ではありませんが，記述しない場合は画面遷移後にキーワード入力欄が空になってしまうため，やや動作としてわかりづらくなります．</p>
+<p>検索フォームを設置したので，次に検索処理を実装します．</p>
+<h2 id="検索処理の追加"><a class="header" href="#検索処理の追加">検索処理の追加</a></h2>
+<p>設置した検索フォームは本質的に /list に対して GET リクエストを送信するものなので，対応する関数 <code>service.TaskList</code> を編集します．
+検索機能を実現するために必要な追加処理は以下の 2 つです．</p>
+<ol>
+<li>パスパラメータから検索キーワードを取得</li>
+<li>タイトルに検索キーワードを含むタスクのみを絞り込んで表示</li>
+</ol>
+<p>Gin フレームワークを使用する場合，<code>gin.Context.Query</code> メソッドを使用することでリクエストパスからパスパラメータを取得可能です．
+今回は &quot;kw&quot; を key として検索キーワードが渡されるため，<code>ctx.Query(&quot;kw&quot;)</code> を呼び出すことで <code>TaskList</code> 関数内で検索キーワードを受け取ります．</p>
+<p>タイトルに検索キーワードを含むタスクのみを絞り込むには，i) DB からタスクを全件取得してから条件に一致するタスクのみを抽出する方法，ii) DB から条件に一致するデータのみを取得する方法，の 2 通りが考えられます．
+前者 (i) の方法でも悪くはないですが，DB はそもそもこうした操作を得意とするアプリケーションなので，一般には後者 (ii) の方法がより効率的です．
+MySQL などにおいてデータの取得条件として特定の文字列を含むもののみを抽出するには &quot;LIKE&quot; 句を使用します．</p>
+<p><code>service.TaskList</code> 関数に施す具体的な修正を以下に示します．</p>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">// TaskList renders list of tasks in DB
+func TaskList(ctx *gin.Context) {
+	// Get DB connection
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+
+    // Get query parameter
+    kw := ctx.Query(&quot;kw&quot;)
+
+	// Get tasks in DB
+	var tasks []database.Task
+    switch {
+    case kw != &quot;&quot;:
+        err = db.Select(&amp;tasks, &quot;SELECT * FROM tasks WHERE title LIKE ?&quot;, &quot;%&quot; + kw + &quot;%&quot;)
+    default:
+        err = db.Select(&amp;tasks, &quot;SELECT * FROM tasks&quot;)
+    }
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+
+	// Render tasks
+	ctx.HTML(http.StatusOK, &quot;task_list.html&quot;, gin.H{&quot;Title&quot;: &quot;Task list&quot;, &quot;Tasks&quot;: tasks, &quot;Kw&quot;: kw})
+}
+</code></pre>
+<p>修正版の <code>service.TaskList</code> 関数では，11 行目でパスパラメータを取得し，指定された検索条件に応じて 15～20 行目で適切な検索クエリを DB へ発行しています．
+また，27 行目の画面表示において，変数 <code>kw</code> を検索フォームに表示するために追加で指定しています．</p>
+<p>17 行目の条件付きデータ取得クエリでは，<code>WHERE title LIKE '%&lt;kw&gt;%'</code> を指定することで，&quot;&lt;kw&gt;&quot; を部分文字列としてタイトルに含むタスクのみを抽出しています．
+キーワード指定時の '%' は任意の 0 文字以上の文字列にマッチする特殊文字です．
+'%' を指定し忘れると，部分文字列ではなく正確に &quot;&lt;kw&gt;&quot; にマッチするタイトルを持つタスクのみしか拾えなくなる点に注意して下さい．</p>
+<div class="memo">
+ここで示した修正版 <code class="hljs">service.TaskList</code> 関数では，検索キーワードの有無によってクエリを変更していますが，実は検索キーワードの有無に依存せず 17 行目の記述のみでも問題なく動作します．
+というのも，今回は検索キーワードをタイトルに含むタスクのみを抽出するクエリであり，検索キーワードが指定されない場合，すなわち変数 <code class="hljs">kw</code> が空文字の場合には，条件節が <code class="hljs">... WHERE title LIKE '%%'</code> となり，これはどのような文字列に対してもマッチします．
+したがって，最終的な結果としては条件を何も指定しない場合と同様になります．
+<p>一方で，以下の練習問題のように複数の検索条件を設定する場合には，検索条件の設定に応じて処理を分岐する必要性が出てくるため，ここでは敢えて switch 文による条件分岐を記述しています．</p>
+</div>
+<h4 id="練習問題-8-期末レポートに関連"><a class="header" href="#練習問題-8-期末レポートに関連">練習問題 8 (期末レポートに関連)</a></h4>
+<p>「完了済みのタスク」や「未完了のタスク」のみを個別に指定する方法を考え，実装してください．
+なお，検索フォームに新たなフィールドを付け加えても構いません．</p>
+<h2 id="まとめ"><a class="header" href="#まとめ">まとめ</a></h2>
+<p>今回は<a href="https://cs-sysdes.github.io/todolist.html">基本仕様 S-1.2</a> として要求される検索機能を実装しました．</p>
+<p>次回から 2 回に分けてログイン機能およびアカウント管理機能を実装し，要求されている基本仕様の実装を一通り完了する予定です．</p>
+<p>今回の内容は短いですが以上になります．
+お疲れさまでした．</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="07_task_management.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="XX_reference.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="07_task_management.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="XX_reference.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="theme/highlight-line-numbers.js"></script>
+        <script type="text/javascript" src="theme/custom.js"></script>
+    </body>
+</html>
