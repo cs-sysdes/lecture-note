@@ -3304,7 +3304,7 @@ import (
 )
 
 func NewUserForm(ctx *gin.Context) {
-    ctx.HTML(http.StatusOK, &quot;new_user_form.html&quot;, nil)
+    ctx.HTML(http.StatusOK, &quot;new_user_form.html&quot;, gin.H{&quot;Title&quot;: &quot;Register user&quot;})
 }
 </code></pre>
 <p>ルーティング設定を修正し，画面を表示できるようにします．
@@ -3414,23 +3414,91 @@ DB中の <code>users.name</code> 属性には UNIQUE 制約を付けたため，
 このとき，それぞれのフィールドが非空文字列であることは <code>required</code> 属性によってチェックされていますが，ユーザ名の重複が発生した際はエラーページだけが表示される不親切な設計となっています．</p>
 <p>よくある実用的なアプリケーションでは，ユーザ名の重複がある際には入力画面上にエラー文を表示し，別のユーザ名を入力するよう誘導する仕組みを備えていることが多いです．
 todolist.go にもそのような機能を実装し，エラーの内容をわかりやすく表示したうえで再入力を促すフォームを作成してみます．</p>
-<p><font color="#FF0000">TBU: ここの内容を今日中に更新します．</font></p>
-<!--
-<span class="filename">todolist.go/views/new\_user\_form.html</span>
-```html
-{{ template "header" . }}
-<h1 id="ユーザ登録"><a class="header" href="#ユーザ登録">ユーザ登録</a></h1>
+<h3 id="エラー表示エリアの配置"><a class="header" href="#エラー表示エリアの配置">エラー表示エリアの配置</a></h3>
+<p>まずはエラーを表示する場所を確保するため，todolist.go/views/new_user_form.html を以下のように修正します．
+先に実装したものに対し主に 3〜5 行目の記述を追加しました．
+また，各入力フィールドに <code>value</code> 属性を追加し，最後の入力値を引き継げるようにしています．</p>
+<p><span class="filename">todolist.go/views/new_user_form.html</span></p>
+<pre><code class="language-html">{{ template &quot;header&quot; . }}
+&lt;h1&gt;ユーザ登録&lt;/h1&gt;
 {{ if .Error }}
-<p><font color="#DD0000">{{ .Error }}</font><p>
+&lt;p&gt;&lt;font color=&quot;#FF0000&quot;&gt;{{ .Error }}&lt;/font&gt;&lt;p&gt;
 {{ end }}
-<form action="/user/new" method="POST">
-    <label>ユーザ名: </label><input type="text" name="username" required><br>
-    <label>パスワード: </label><input type="text" name="password" required><br>
-    <input type="submit" value="登録">
-</form>
-{{ template "footer" }}
-```
--->
+&lt;form action=&quot;/user/new&quot; method=&quot;POST&quot;&gt;
+    &lt;label&gt;ユーザ名: &lt;/label&gt;&lt;input type=&quot;text&quot; name=&quot;username&quot; value=&quot;{{ .Username }}&quot;required&gt;&lt;br&gt;
+    &lt;label&gt;パスワード: &lt;/label&gt;&lt;input type=&quot;text&quot; name=&quot;password&quot; value=&quot;{{ .Password }}&quot; required&gt;&lt;br&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;登録&quot;&gt;
+&lt;/form&gt;
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>3〜5 行目は，<code>.Error</code> が値を持っていれば，4 行目に示すエラー表示エリア (<code>&lt;p&gt;</code> タグ) を有効化するものです．
+すなわち，<code>.Error</code> が <code>nil</code> でない場合，あるいは <code>.Error</code> が空文字でない場合にのみ，エラー表示エリアが有効化されます．
+エラー表示なので <code>&lt;font&gt;</code> タグを用いて <font color="#FF0000">赤色</font> で表示するようにしています．</p>
+<p><code>value=&quot;{{ .Username }}&quot;</code> および <code>value=&quot;{{ .Password }}&quot;</code> の部分についても，値が渡されなければ空文字列，すなわち共に <code>value=&quot;&quot;</code> となるので問題ありません．</p>
+<p>このように，値がある場合のみ有効化されるタグを配置しておき，エラー文やメッセージが存在する場合のみ表示する技法はたびたび需要があるので，覚えておくと良いかもしれません．</p>
+<h3 id="エラーの送出"><a class="header" href="#エラーの送出">エラーの送出</a></h3>
+<p>エラー表示エリアを確保したので，次はエラー文を埋め込む方法を考えます．
+このフォームは /user/new への GET リクエストを処理した結果として表示される画面として作成しました．
+しかしながら，初回アクセス時は単純にフォームを表示するだけなので，エラーは何も表示されないはずです．
+したがって，<code>service.NewUserForm</code> 関数は特に修正する必要がありません．</p>
+<p>ユーザ登録処理を追えばわかる通り，エラー文が表示されるのは /user/new への POST リクエストを処理する途中でエラーが発生した場合です．
+すなわち，<code>service.RegiterUser</code> 関数実行中のエラーを補足し，エラー文を構成した上でこのフォームを送り返してあげればよさそうです．</p>
+<p>以下に実装例を示します．</p>
+<p><span class="filename">todolist.go/service/user.go</span></p>
+<pre><code class="language-go">...
+func RegisterUser(ctx *gin.Context) {
+    // フォームデータの受け取り
+    usernmame := ctx.PostForm(&quot;usernmame&quot;)
+    password := ctx.PostForm(&quot;password&quot;)
+    switch {
+    case username == &quot;&quot;:
+        ctx.HTML(http.StatusBadRequest, &quot;new_user_form.html&quot;, gin.H{&quot;Title&quot;: &quot;Register user&quot;, &quot;Error&quot;: &quot;Usernane is not provided&quot;, &quot;Username&quot;: username})
+    case password == &quot;&quot;:
+        ctx.HTML(http.StatusBadRequest, &quot;new_user_form.html&quot;, gin.H{&quot;Title&quot;: &quot;Register user&quot;, &quot;Error&quot;: &quot;Password is not provided&quot;, &quot;Password&quot;: password})
+    }
+    
+    // DB 接続
+    db, err := database.GetConnection()
+    if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+    }
+
+    // 重複チェック
+    var duplicate int
+    err = db.Get(&amp;duplicate, &quot;SELECT COUNT(*) FROM users WHERE name=?&quot;, username)
+    if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+    }
+    if duplicate &gt; 0 {
+        ctx.HTML(http.StatusBadRequest, &quot;new_user_form.html&quot;, gin.H{&quot;Title&quot;: &quot;Register user&quot;, &quot;Error&quot;: &quot;Username is already taken&quot;, &quot;Username&quot;: username, &quot;Password&quot;: password})
+        return
+    }
+    // DB への保存
+    ...
+</code></pre>
+<p>1 つめ修正点は 6〜11 行目です．
+修正前は以下のようにユーザ名かパスワードのいずれかが空文字列であればエラー画面を表示するコードでした．</p>
+<pre><code class="language-go">    if username == &quot;&quot; || password == &quot;&quot; {
+        Error(http.StatusBadRequest, &quot;Empty parameter&quot;)(ctx)
+        return
+    }
+</code></pre>
+<p>これを switch 文を使用してエラーの種類を識別し，以下のように適切なエラー文を表示するよう修正しています．</p>
+<pre><code class="language-go">    switch {
+    case username == &quot;&quot;:
+        ctx.HTML(http.StatusBadRequest, &quot;new_user_form.html&quot;, gin.H{&quot;Title&quot;: &quot;Register user&quot;, &quot;Error&quot;: &quot;Usernane is not provided&quot;, &quot;Username&quot;: username})
+    case password == &quot;&quot;:
+        ctx.HTML(http.StatusBadRequest, &quot;new_user_form.html&quot;, gin.H{&quot;Title&quot;: &quot;Register user&quot;, &quot;Error&quot;: &quot;Password is not provided&quot;, &quot;Password&quot;: password})
+    }
+</code></pre>
+<p>2 つめの修正点として 21〜30 行目のコードを追加しました．
+これはユーザ名の重複を確認するコードであり，変数 <code>username</code> がすでに登録されているユーザ名である場合に，<code>duplicate &gt; 0</code> が成立するためエラー文が表示される仕組みになっています．
+ただし，ユーザ名の重複以外の理由でエラーになる場合は <code>err != nil</code> のブロックが有効になり，こちらは内部エラーとして処理するようにしています．
+ちなみに，ここはもう少し効率的な記述方法があるかもしれませんので，もし知っている人やアイデアのある方は教えてください．
+DB への保存時に UNIQUE 制約違反のエラーをキャプチャしても良いのですが，他のエラーとの区別が面倒だったのでとりあえず別処理にしています．</p>
+<p>これらの機能の動作確認として，重複するユーザ名を登録した時にどのような画面表示がなされるかを確認してみましょう．</p>
 <h5 id="練習問題-9-3"><a class="header" href="#練習問題-9-3">練習問題 9-3</a></h5>
 <p>よくあるアカウント登録ページでは，パスワードを 2 回入力させることで，タイプミスによって認証できなくなる事態を防いでいます．
 本アプリケーションでも同様の仕組みを実装し，パスワードの入力にミスがある場合にはエラーを表示するよう実装を修正してみましょう．</p>
