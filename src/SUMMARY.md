@@ -14,7 +14,7 @@
 - [07: タスクの作成・編集・削除](07_task_management.md)
 - [08: 検索機能](08_search.md)
 - [09: アカウント管理機能 (1)](09_account_management_1.md)
-- [10: アカウント管理機能 (2)]()
+- [10: アカウント管理機能 (2)](10_account_management_2.md)
 
 ---
 # 補足資料
