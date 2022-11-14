@@ -1,0 +1,681 @@
+<!DOCTYPE HTML>
+<html lang="ja" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>10: アカウント管理機能 (2) - CSC.T364 Workshop on System Design -  Web programming</title>
+        <!-- Custom HTML head -->
+<meta name="robots" content="noindex,nofollow,noarchive"/>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="Lecture note for Web programming course 2022 in CSC.T364 Workshop on System Design">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="theme/highlight-line-numbers.css">
+        <link rel="stylesheet" href="theme/custom.css">
+        <!-- MathJax -->
+        <script async type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded affix "><a href="index.html">HOME</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 基礎編</li><li class="chapter-item expanded "><a href="01_preliminary.html">01: 演習のための準備</a></li><li class="chapter-item expanded "><a href="02_http_and_routing.html">02: HTTP通信とルーティング</a></li><li class="chapter-item expanded "><a href="03_web_application_framework.html">03: Webアプリケーションフレームワーク</a></li><li class="chapter-item expanded "><a href="04_state_management_v1.html">04: HTTP通信における状態管理 (1)</a></li><li class="chapter-item expanded "><a href="05_state_management_v2.html">05: HTTP通信における状態管理 (2)</a></li><li class="chapter-item expanded affix "><li class="part-title">演習資料 実践編</li><li class="chapter-item expanded "><a href="06_todolist.html">06: タスク管理アプリケーション</a></li><li class="chapter-item expanded "><a href="07_task_management.html">07: タスクの作成・編集・削除</a></li><li class="chapter-item expanded "><a href="08_search.html">08: 検索機能</a></li><li class="chapter-item expanded "><a href="09_account_management_1.html">09: アカウント管理機能 (1)</a></li><li class="chapter-item expanded "><a href="10_account_management_2.html" class="active">10: アカウント管理機能 (2)</a></li><li class="spacer"></li><li class="chapter-item expanded affix "><li class="part-title">補足資料</li><li class="chapter-item expanded "><a href="XX_reference.html">参考サイト</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">CSC.T364 Workshop on System Design -  Web programming</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/cs-sysdes/lecture-note" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="10-アカウント管理機能-2"><a class="header" href="#10-アカウント管理機能-2">10: アカウント管理機能 (2)</a></h1>
+<p><a href="09_account_management_1.html">前回</a>に引き続き<a href="https://cs-sysdes.github.io/todolist.html">仕様書</a>に示す基本仕様 S-1.3 および S-1.4 について実装を進めます．</p>
+<p>今回は主にログイン・ログアウトの機能を実装し，ログイン状態に応じてページアクセスを制限する仕組みを実装します．
+また，ユーザとタスクを紐づけ，ユーザ自身が登録したタスクのみを閲覧・編集可能とするようアプリケーションを修正します．</p>
+<ol>
+<li>ログイン・ログアウト機能</li>
+<li>ユーザとタスクの紐付け</li>
+<li>ユーザの削除</li>
+</ol>
+<p>ユーザ名やパスワードなどのユーザ情報を変更する機能については，基本仕様に含まれていますが，<a href="07_task_management.html#%E6%97%A2%E5%AD%98%E3%82%BF%E3%82%B9%E3%82%AF%E3%81%AE%E7%B7%A8%E9%9B%86">タスクの編集機能</a>と同様ですので資料内では扱いません．
+各自で実装を進めて下さい．
+注意点として，パスワード変更の際には元のパスワードを同時に入力させ，たしかにユーザ自身による操作であることを確認したうえでパスワードを更新する仕組みがあると親切でしょう．</p>
+<p>以下の内容は<a href="09_account_management_1.html">前回</a>実装したユーザデータを使用する機能になります．
+前回の内容をまだ終えていない場合は，先にそちらに取り組んでください．</p>
+<h2 id="ログインログアウト機能"><a class="header" href="#ログインログアウト機能">ログイン・ログアウト機能</a></h2>
+<p>登録したユーザ情報に基づいて，アプリケーション内でログイン状態・ログアウト状態を切り替える機能を実装します．
+状態管理が必要になる部分ですので，<a href="05_state_management_2.html">第5回</a>において扱った「セッション方式」を採用することとします．</p>
+<h3 id="セッション管理の準備"><a class="header" href="#セッション管理の準備">セッション管理の準備</a></h3>
+<p>以前と同様に自力で Cookie の管理を行っても良いのですが，ここでは特に Gin フレームワーク上でセッション管理を行うためのプラグインを使用して楽をしましょう．
+以下のコマンドを実行し，依存モジュール <a href="https://pkg.go.dev/github.com/gin-contrib/sessions">github.com/gin-contrib/sessions</a> をプロジェクトに追加します．</p>
+<pre><code class="language-sh">$ docker-compose exec app go get github.com/gin-contrib/sessions
+</code></pre>
+<p>このコマンドを実行したのち，Docker コンテナを再ビルドする際にエラーが発生する場合があります．
+もし <code>docker-compose up -d</code> がうまく動かなくなった場合は，Slack に質問を投げてください．</p>
+<p>アプリケーション内でセッション機能を有効化するため，todolist.go/main.go に対し以下 8～9 行目および 21～23 行目に示す追加実装を行います．</p>
+<p><span class="filename">todolist.go/main.go</span></p>
+<pre><code class="language-go">package main
+
+import (
+    ...
+	&quot;github.com/gin-gonic/gin&quot;
+	_ &quot;github.com/go-sql-driver/mysql&quot;
+
+    &quot;github.com/gin-contrib/sessions&quot;
+    &quot;github.com/gin-contrib/sessions/cookie&quot;
+    ...
+)
+
+const port = 8000
+
+func main() {
+    ...
+	// initialize Gin engine
+	engine := gin.Default()
+	engine.LoadHTMLGlob(&quot;views/*.html&quot;)
+
+    // prepare session
+    store := cookie.NewStore([]byte(&quot;my-secret&quot;))
+    engine.Use(sessions.Sessions(&quot;user-session&quot;, store))
+
+	// routing
+	engine.Static(&quot;/assets&quot;, &quot;./assets&quot;)
+	engine.GET(&quot;/&quot;, service.Home)
+    ...
+</code></pre>
+<p>8～9行目において，先ほどプロジェクトに追加したパッケージを import し，利用可能にしています．
+それぞれ 8 行目がセッション管理機能を提供するパッケージ，9 行目がセッションの状態を Cookie で管理するためのパッケージになります．</p>
+<p>22～23 行目の記述が，実際にセッション管理を有効化するコードです．
+22 行目の変数 <code>store</code> は，Cookie を使用してセッション情報を保存する仕組みを提供するためのインタフェースになります．
+23 行目において Gin のルーティングエンジンに対し変数 <code>store</code> を利用したセッション管理機能を追加し，有効化しています．</p>
+<p>22, 23 行目に出現する文字列 <code>&quot;my-secret&quot;</code> および <code>&quot;user-session&quot;</code> は，それぞれ任意の文字列を使用することができます．
+<code>&quot;my-secret&quot;</code> は Cookie を検証するための署名鍵であり，32バイトあるいは64バイトの文字列であることが推奨されていますが，ここでは特に気にせず適当な文字列を使用しています．
+Cookie の値は Client-side で書き変えることが容易に可能であるため，署名鍵の検証を行うことで安全性を高めています．
+<code>&quot;user-session&quot;</code> はセッション名であり，複数のセッションを並行して利用する際にセッションの識別を行うために使用しますが，今回は単一セッションなので特に気にしなくて良いです．</p>
+<p>これらのコードを追加したことで，アプリケーションに対するすべての通信においてセッションの使用が可能になります．
+セッションを使用する準備ができたので，ログイン機能から順に実装していきます．</p>
+<h3 id="ログイン機能"><a class="header" href="#ログイン機能">ログイン機能</a></h3>
+<p>ログインに必要な処理は，送信されたユーザ名およびパスワードを登録済みのユーザ情報と照らし合わせ，適切なユーザによるログインであることを認証することです．
+また，ユーザアカウントの役割を考えると，セッションにユーザ ID を関連づけ，どのユーザによるセッションなのかを識別できるようにした方が良いでしょう．</p>
+<p>はじめに，ログインフォームを作成します．
+ログインフォームは /login に対する GET リクエストで表示するようルーティングを行うこととします．
+トップページなどにリンクを配置し，ログイン画面へ誘導できるようにしておきましょう．</p>
+<p>ログインページを todolist.go/views/login.html に作成します．</p>
+<p><span class="filename">todolist.go/views/login.html</span></p>
+<pre><code class="language-html">{{ template &quot;header&quot; . }}
+&lt;h1&gt;Login&lt;/h1&gt;
+{{ if .Error }}
+&lt;p&gt;&lt;font color=&quot;#FF0000&quot;&gt;{{ .Error }}&lt;/font&gt;&lt;/p&gt;
+{{ end }}
+&lt;form action=&quot;/login&quot; method=&quot;POST&quot;&gt;
+    &lt;label&gt;ユーザ名: &lt;/label&gt;&lt;input type=&quot;text&quot; name=&quot;username&quot; value=&quot;{{ .Username }}&quot; required&gt;&lt;br&gt;
+    &lt;label&gt;パスワード: &lt;/label&gt;&lt;input type=&quot;password&quot; name=&quot;password&quot; required&gt;&lt;/br&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;ログイン&quot;&gt;
+&lt;/form&gt;
+&lt;p&gt;&lt;a href=&quot;/user/new&quot;&gt;ユーザ登録&lt;/a&gt;&lt;/p&gt;
+{{ template &quot;footer&quot; }}
+</code></pre>
+<p>ログインページはユーザ登録ページとほぼ同じ構造なので詳しい説明は省略します．
+一つ新しい要素として，ここでは <code>input[type=&quot;password&quot;]</code> を使用することで，下記のように入力値を隠すよう実装しています．</p>
+<div style="margin: auto 20pt">
+<label>パスワード: </label><input type="password" value="test">
+</div>
+<p>次に todolist.go/service/user.go を編集し，/login への POST リクエストに対してログイン処理を実行する関数 <code>Login</code> を追加します．</p>
+<p>ログイン状態の判別は，セッションにユーザ ID が割当てられているかによって行うこととします．
+すなわち，セッションがユーザ ID を持っていれば当該 ID を持つユーザによってログインされている状態，ユーザ ID を持っていなければ非ログイン状態であると判定します．
+したがって，関数 <code>Login</code> が行うべき処理は，以下の 4 つになります．</p>
+<ol>
+<li>送信されたユーザ名およびパスワードの取得</li>
+<li>該当するユーザの検索</li>
+<li>パスワードの一致判定</li>
+<li>セッションへのユーザ ID の保存</li>
+</ol>
+<p>2 および 3 の処理において，たとえば該当するユーザが存在しない，あるいはパスワードが一致しないなどのエラーを検出した場合，ログインページにエラーの内容を表示して再入力を促すようにします．</p>
+<p><span class="filename">todolist.go/service/user.go</span></p>
+<pre><code class="language-go">package service
+
+import (
+    &quot;crypto/sha256&quot;
+    &quot;encoding/hex&quot;
+    &quot;net/http&quot;
+    
+    &quot;github.com/gin-gonic/gin&quot;
+    &quot;github.com/gin-contrib/sessions&quot;
+    database &quot;todolist.go/db&quot;
+)
+
+...
+
+const userkey = &quot;user&quot;
+
+func Login(ctx *gin.Context) {
+    username := ctx.PostForm(&quot;username&quot;)
+    password := ctx.PostForm(&quot;password&quot;)
+
+    db, err := database.GetConnection()
+    if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+    }
+
+    // ユーザの取得
+    var user database.User
+    err = db.Get(&amp;user, &quot;SELECT id, name, password FROM users WHERE name = ?&quot;, username)
+    if err != nil {
+        ctx.HTML(http.StatusBadRequest, &quot;login.html&quot;, gin.H{&quot;Title&quot;: &quot;Login&quot;, &quot;Username&quot;: username, &quot;Error&quot;: &quot;No such user&quot;})
+        return
+    }
+
+    // パスワードの照合
+    if hex.EncodeToString(user.Password) != hex.EncodeToString(hash(password)) {
+        ctx.HTML(http.StatusBadRequest, &quot;login.html&quot;, gin.H{&quot;Title&quot;: &quot;Login&quot;, &quot;Username&quot;: username, &quot;Error&quot;: &quot;Incorrect password&quot;})
+        return
+    }
+
+    // セッションの保存
+    session := sessions.Default(ctx)
+    session.Set(userkey, user.ID)
+    session.Save()
+
+    ctx.Redirect(http.StatusFound, &quot;/list&quot;)
+}
+</code></pre>
+<p>ハッシュ値の比較 (等価判定) のために，パッケージ <code>encoding/hex</code> の import を追加しています．
+また，ログイン状態をセッションに記録するため，パッケージ <code>github.com/gin-contrib/sessions</code> も import します．</p>
+<p>DB から取得する <code>user.Password</code> は，パスワード文字列をダイジェスト化したものです．
+したがって，パスワードを照合する場合は，入力されたパスワードも <code>hash</code> 関数を通してダイジェスト化した上で一致判定を行う必要があります．
+ダイジェスト化に使用している一方向性関数 SHA-256 は決定的関数であり，同じ入力に対して常に同じハッシュ値を返すため，パスワードが一致するならハッシュ値も一致します．
+ただし，逆は一般に成立しません (ハッシュ値の衝突が起こり得ます)．</p>
+<p><code>user.Password</code> は <code>[]byte</code> 型の変数として定義されており，関数 <code>hash</code> の戻り値も <code>[]byte</code> 型です．
+直接 <code>user.Password == hash(password)</code> として比較してしまうと，これはスライスの比較となるため正常にパスワードの一致判定をすることができません．
+したがって，ここでは <code>hex.EncodeToString</code> 関数を使用して文字列にエンコードした上で比較を行っています．</p>
+<p>セッションへのユーザ ID の保存は以下の手順で行います．</p>
+<ol>
+<li>いま処理している通信のセッションを習得</li>
+<li>セッションに key-value ペアの形式で保存したい情報 (ユーザ ID) を記入</li>
+<li>セッション情報の更新 (保存)</li>
+</ol>
+<p><a href="#%E3%82%BB%E3%83%83%E3%82%B7%E3%83%A7%E3%83%B3%E7%AE%A1%E7%90%86%E3%81%AE%E6%BA%96%E5%82%99">セッション管理の準備</a> において todolist.go/main.go に記述したセッション管理を有効化するコードにより，すべての通信には接続元に応じてセッションが紐づけられるようになっています．
+したがって，いま処理している通信のセッションは，42 行目に示すように <code>sessions.Default</code> 関数で取得可能となっています．</p>
+<p>適当な名前 <code>userkey := &quot;user&quot;</code> を定義し，セッション中に <code>user=&lt;user ID&gt;</code> の形式でユーザ ID を記入します (43 行目)．
+最後に <code>sessions.Session.Save</code> メソッドを呼びセッション情報に加えた更新を有効化します (44 行目)．</p>
+<p>以上の処理によりセッション上にユーザ ID が載るため，次回以降の接続ではセッション中のユーザ ID の値を確認することで，どのユーザによってログインされているセッションであるかを識別できます．
+また，セッション中にユーザ ID が保存されていなければ，未ログイン状態のユーザによるアクセスであることを判別できます．</p>
+<p>ログインページの表示およびログイン処理に関して適切なルーティングを設定し，またトップページなどにログインページへのリンクを設置し，ログイン機能が適切に動作することを確認しましょう．
+ログインに成功した場合は /list へリダイレクトされ，失敗した場合はエラーが表示されるはずです．
+ユーザ名やパスワードをわざと間違えてみて，想定通りの動作を行うか調べてみるとよいでしょう．</p>
+<p>ここまででユーザアカウントを用いたログイン処理ができるようになりました．
+しかしながら，現在のアプリケーションはログイン状態に依らず誰しもがすべてのページへアクセス可能になっています．
+これではログイン機能の意味がないので，いくつかのページにアクセス制限をかけてログイン状態でなければページを表示できないようにしてみます．</p>
+<h3 id="アクセス制限"><a class="header" href="#アクセス制限">アクセス制限</a></h3>
+<p>ここではタスクの表示機能にアクセス制限をかけることとします．
+すなわち，ログインしているユーザはタスクの一覧表示や登録機能，編集機能を使用できますが，ログインしていないユーザはログインページへ誘導されてしまうような仕組みの実装を目指します．</p>
+<p>本資料ではセッションにユーザ ID が割当てられているかによってログイン状態を判別するよう実装を進めてきました．
+したがって，セッション上のユーザ ID を検査し，割当てがある場合のみタスクの一覧表示などの処理を正常に行うことで，アクセス制限を実現することができます．
+セッションにユーザ ID 割当てがない場合は，即座にログインページへリダイレクトすることで，リクエストを弾いていきます．</p>
+<p>素朴な実装を考えれば，アクセス制限をかけたいリクエスト対象すべての関数の冒頭においてセッションにユーザ ID が含まれるかを確認するコードを実装するとよいでしょう．
+たとえば以下のようになります (これは例ですので実装する必要はありません)．</p>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">func TaskList(ctx *gin.Context) {
+    // アクセス制限の例
+    userID := session.Default(ctx).Get(&quot;user&quot;)
+    if userID == nil {
+        ctx.Redirect(http.StatusFound, &quot;/login&quot;)
+        return
+    }
+    ...
+</code></pre>
+<p>実装自体は単純ですが，これを該当するすべての関数に追加するのは面倒ではないでしょうか．
+また，今後アクセス制限をかけたい処理が増える可能性を考えると，まとめて管理できる仕組みがほしくなります．</p>
+<p>この要求に応えるため，ここでは Gin フレームワークのもつ <strong>middleware</strong> という機能を利用して，よりアクセス制限を管理しやすい実装を行います．
+Gin における <strong>middleware</strong> とは，実際に処理を行う関数 (ハンドラ) と同じ形式を持つ関数 (<code>func(*gin.Context)</code> 型) によって定義される共通処理を意味します．
+middleware を使用することで，リクエストに応じた個々の処理の手前で実行すべき共通処理を，ルーティング時に (まとめて) 挿入することができます．</p>
+<h4 id="middleware-の実装"><a class="header" href="#middleware-の実装">middleware の実装</a></h4>
+<p>ログイン処理を担当する middleware を以下に示す <code>LoginCheck</code> 関数として実装します．
+ログイン処理はユーザ関連の処理であり，また変数 <code>userkey</code> にアクセスしたいため，todolist.go/service/user.go ファイル内に定義しています．
+本来であれば，todolist.go/service/auth.go などとして，認証処理だけでファイルを分割する方が設計上は良いかもしれません．</p>
+<p><span class="filename">todolist.go/service/user.go</span></p>
+<pre><code class="language-go">func LoginCheck(ctx *gin.Context) {
+    if sessions.Default(ctx).Get(userkey) == nil {
+        ctx.Redirect(http.StatusFound, &quot;/login&quot;)
+        ctx.Abort()
+    } else {
+        ctx.Next()
+    }
+}
+</code></pre>
+<p>ログイン処理自体は，セッション上のユーザ ID を検査するだけなので，それほど難しくはないと思います．
+２行目に示すように，セッションを取得し，セッション中に <code>userkey</code> に該当する値が存在することを確認できればログイン状態，そうでなければ (= <code>nil</code> であれば) 非ログイン状態となります．
+非ログイン状態の場合，ログインページへのリダイレクトを指定します (3行目)．</p>
+<p>middleware は中間処理を記述するものなので，次の middleware あるいは最終処理を継続して実行すべきか指示する必要があります．
+非ログイン状態では，ログインページへリダイレクトした後の処理はすべてスキップしたい (リクエストをここで弾きたい) ので，<code>gin.Context.Abort</code> メソッドを呼び出して処理の終了を明示します (4 行目)．
+一方，ログイン状態では，そのまま処理を継続してほしいので，<code>gin.Context.Next</code> メソッドによってその旨を明示します (6 行目)．</p>
+<p>このように，middleware を定義する際は基本的に <code>Abort</code> メソッドか <code>Next</code> メソッドを最後に呼び出す必要がある点に注意してください．</p>
+<h4 id="middleware-の適用"><a class="header" href="#middleware-の適用">middleware の適用</a></h4>
+<p>定義した middleware を実際に使用していきます．
+現状のルーティング設定に対し middleware を追加していくよう実装を進めます．
+以下に現状のルーティング設定を示しますが，各自で追加定義したルーティングなどがあれば適宜補いながら進めてください．</p>
+<p><span class="filename">todolist.go/main.go</span></p>
+<pre><code class="language-go">...
+	// routing
+	engine.Static(&quot;/assets&quot;, &quot;./assets&quot;)
+	engine.GET(&quot;/&quot;, service.Home)
+
+    engine.GET(&quot;/list&quot;, service.TaskList)
+
+    engine.GET(&quot;/task/:id&quot;, service.ShowTask) // &quot;:id&quot; is a parameter
+    engine.GET(&quot;/task/new&quot;, service.NewTaskForm)
+    engine.POST(&quot;/task/new&quot;, service.RegisterTask)
+    engine.GET(&quot;/task/edit/:id&quot;, service.EditTaskForm)
+    engine.POST(&quot;/task/edit/:id&quot;, service.NotImplemented)
+    engine.GET(&quot;/task/delete/:id&quot;, service.DeleteTask)
+
+    engine.GET(&quot;/user/new&quot;, service.NewUserForm)
+    engine.POST(&quot;/user/new&quot;, service.RegisterUser)
+
+	engine.GET(&quot;/login&quot;, service.LoginForm)
+	engine.POST(&quot;/login&quot;, service.Login)
+...
+</code></pre>
+<p>はじめに，パッケージの一覧表示に対し middleware を追加します．
+middleware の追加方法は大きく分けて 2 つ存在しますが，ここでは単純にリクエストに対する処理として追加する方法をとります．</p>
+<p>6 行目のルーティング設定を以下のように変更し，middleware を適用します．
+Gin フレームワークのルーティング設定では，このように複数の処理をリクエストに紐づけることができます．
+リクエストを処理する関数と middleware は同じ型を持っているため，このような指定が可能となっています．</p>
+<pre><code class="language-go">...
+    engine.GET(&quot;/list&quot;, service.LoginCheck, service.TaskList)
+...
+</code></pre>
+<p>上記のように複数の処理を同一リクエストに結び付けた場合，それぞれ先頭から順に処理が適用されます．
+一般に一番末尾の処理がリクエストに対して行いたい処理になるため，その前に middleware を挟むイメージとなります．</p>
+<p>今回の場合は，まず middleware である <code>service.LoginCheck</code> 関数が呼ばれ，ログイン済みのセッションであれば <code>service.TaskList</code> を呼び出すよう処理が進みます．
+非ログイン状態のセッションであった場合は，middleware 内でリダイレクトの設定がなされたうえで処理が中断されるため，<code>service.TaskList</code> は呼び出されません．</p>
+<p>次に middleware を追加する方法の 2 つ目として，ルーティングの<strong>グループ化</strong>による一括追加を行います．
+対象はタスクの表示・新規登録・編集・削除など，タスクに関連するリクエスト処理に対し一括してアクセス制限をかけます．</p>
+<p><strong>グループ化</strong>は Gin フレームワークの持つ機能の一つであり，複数のパスの一括管理を可能にします．
+たとえば，8～13 行目に記述されたタスク関連のルーティングはすべて /task という共通パスを持っていますが，こうした共通パスを持つルーティングをグループ化できます．</p>
+<p>8～13 行目のルーティング設定に対し，グループ化を用いて middleware の設定を行うと以下のようになります．</p>
+<pre><code class="language-go">...
+    taskGroup := engine.Group(&quot;/task&quot;)
+    taskGroup.Use(service.LoginCheck)
+    {
+        taskGroup.GET(&quot;/:id&quot;, service.ShowTask)
+        taskGroup.GET(&quot;/new&quot;, service.NewTaskForm)
+        taskGroup.POST(&quot;/new&quot;, service.RegisterTask)
+        taskGroup.GET(&quot;/edit/:id&quot;, service.EditTaskForm)
+        taskGroup.POST(&quot;/edit/:id&quot;, service.NotImplemented)
+        taskGroup.GET(&quot;/delete/:id&quot;, service.DeleteTask)
+    }
+...
+</code></pre>
+<p><code>Group</code> メソッドによって /task をプレフィックスパスとするグループを定義し，タスク関連のリクエスト処理をグループ化します．
+middleware は <code>Use</code> メソッドで一括適用が可能であり，上記のコードではグループ内のすべてのルーティング設定に対し，<code>service.LoginCheck</code> を middleware として追加しています．</p>
+<p>グループ内のルーティング設定では，いま /task をプレフィックスパスとして設定したため，すべてのパスから /task を削除する必要があります．
+たとえば上記 5 行目は，これだけでは /:id へのルーティングに見えますが，/task を上位パスとして持つグループへのルーティングであるため，実際には /task/:id へのルーティングを意味します．
+その他のパスも同様に /task を明示的に指定されていませんが，グループ全体で上位パス /task を共有しているため，これまでと同様のパス設定となっています．</p>
+<p>グループ内のすべてのパスは <code>service.LoginCheck</code> を middleware として設定されているので，どのパスにアクセスしてもユーザ ID の検査が実行されます．
+すなわち，こられのパスに対するアクセス制限が一括で適用できているということになります．</p>
+<hr />
+<p>さて，ここまででアクセス制限の適用が完了しているので，非ログイン状態では /list や /task/new にアクセスできないことを確認してみましょう．
+非ログイン状態でこれらのページへアクセスした場合，ログインページへリダイレクトされれば成功です．
+また，ログイン後はこれらのページに遷移可能であることも確かめてみましょう．</p>
+<p>なお，現状ではログアウト機能がないため，一旦ログインしてしまうと簡単に非ログイン状態に戻る方法がありません．
+ログイン状態と非ログイン状態を手軽に切り替えたい場合は，2 つの異なるブラウザでアプリケーションを開くか，ブラウザのプライベートモードを使用してください．
+また，ブラウザの開発者モードに慣れている人であれば，Cookie からセッション情報を削除する機能がありますので，そちらを使用すると良いでしょう．</p>
+<div class="memo">
+ここに示した middleware の記述・実装方法は Gin フレームワーク固有のものです．
+Go 言語で実装された多くの有名な Web フレームワークには，middleware を記述・実装する同様の仕組みがありますが，それぞれ表現方法は異なるかもしれません．
+<p>また，他のプログラミング言語で実装された Web フレームワークなどには，middleware に相当する機能がない場合もあります．
+しかしながら，共通処理を後から挟みこむ middleware の考え方は，プログラム設計の一般論として有用なテクニックだと思いますので，ここで扱うこととしました．</p>
+</div>
+<h3 id="ログアウト機能"><a class="header" href="#ログアウト機能">ログアウト機能</a></h3>
+<p>ログアウトできないのは不便なので，ログアウト機能をつけます．</p>
+<p>ログイン状態はセッションにユーザ ID が保存されているか否かによって判定しています．
+したがってログアウト処理では，セッションからユーザ ID を削除すると良いことがわかります．</p>
+<p>便利なことに，セッションを管理する <code>sessions.Session</code> 構造体には <code>Clear</code> という名のセッション内の情報をすべて削除するメソッドがあるため，これを利用しましょう．
+以下のように <code>Logout</code> 関数を実装します．</p>
+<p><span class="filename">todolist.go/service/user.go</span></p>
+<pre><code class="language-go">...
+func Logout(ctx *gin.Context) {
+    session := sessions.Default(ctx)
+    session.Clear()
+    session.Options(sessions.Options{MaxAge: -1})
+    session.Save()
+    ctx.Redirect(http.StatusFound, &quot;/&quot;)
+}
+</code></pre>
+<p><code>Logout</code> 関数は，セッションを取得 (3 行目) し，セッション上の情報を削除する (4 行目) のが主な動作になります．
+５ 行目は Cookie の有効期間を -1 に設定することで即座に Cookie をリセットするようブラウザに通知するための記述です．
+セッションの状態を更新したので忘れずに <code>Save</code> メソッドを呼び，適当なページへリダイレクトします．
+当然ながら，リダイレクト先にはアクセス制限のかかったページ以外を指定します．</p>
+<p>適切なルーティング設定を行った上で，ログアウトが可能であることを確かめましょう．
+なお，ログアウトはログイン状態でのみ実行され得る処理なので，ログイン状態の時のみログアウトボタンを表示するなどの工夫をすると良いかもしれません</p>
+<h2 id="ユーザとタスクの紐付け"><a class="header" href="#ユーザとタスクの紐付け">ユーザとタスクの紐付け</a></h2>
+<p>ログイン・ログアウト機能およびアクセス制限が可能となりましたが，タスクの閲覧および登録・編集機能は未だにユーザと紐づいていません．
+したがって，ログインさえできてしまえば誰でもタスクを閲覧できるし，他人が登録したタスクを勝手に編集することも可能です．
+これではユーザごとにログインできる意味があまりないので，ここからはユーザとタスクを紐づけ，個々のユーザが自分のタスクのみ閲覧・編集できる仕組みを実装します．</p>
+<p>ユーザとタスクを紐づけるには，主に以下に挙げる 2 通りの方法が考えられます．</p>
+<ol>
+<li>タスクテーブルに所有ユーザを示すカラムを追加し，どのユーザのタスクであるかを管理する</li>
+<li>ユーザとタスクを関連付けるテーブルを用意し，対応関係を管理する</li>
+</ol>
+<p>どちらもメリット・デメリットを持ちますが，今回のように多対多の関係性を DB で管理する場合，2 の方法をとることがベターとされています．
+というのも，仮に<a href="https://cs-sysdes.github.io/todolist.html">追加仕様 S-2.4</a> に取り組むことを考えた場合，1 の方法ではひとつのタスクに対して複数のユーザを紐づけることが難しくなってしまうためです．</p>
+<p>2 の方法を実装するためには，ユーザとタスクを関連付けて保持するためのテーブルを別に用意する必要があります．
+こうしたテーブルは一般に<strong>連想テーブル</strong> (あるいは<strong>交差テーブル</strong>，<strong>中間テーブル</strong>，<strong>結合テーブル</strong> etc.) と呼び，DB におけるテーブル設計の推奨例として定着しています．</p>
+<h3 id="所有関係を保存する連想テーブルの定義"><a class="header" href="#所有関係を保存する連想テーブルの定義">所有関係を保存する連想テーブルの定義</a></h3>
+<p>ユーザとタスクを関連付けるため，ユーザ ID とタスク ID を紐づけた連想テーブルを作成します．
+関連付けにはユーザ名とタスク名のような属性を使用することも可能ですが，こうした属性は重複や変更が発生する可能性があるため，あまり適しているとは言えません．
+一方で，ID はそれぞれのテーブルの主キーであり，同じ ID 値を持つ異なるユーザやタスクは存在しないことが保証されています．
+また，ID は基本的に変化しない値なので，ユーザやタスクの実体を指し示す参照値として適しているといえます．</p>
+<p>ユーザ ID とタスク ID からなる連想テーブル <code>ownership</code> を以下のように定義します．</p>
+<p><span class="filename">todolist.go/docker/db/sql/01_create_tables.sql</span></p>
+<pre><code class="language-sql">...
+DROP TABLE IF EXISTS `ownership`;
+
+CREATE TABLE `ownership` (
+    `user_id` bigint(20) NOT NULL,
+    `task_id` bigint(20) NOT NULL,
+    PRIMARY KEY (`user_id`, `task_id`)
+) DEFAULT CHARSET=utf8mb4;
+</code></pre>
+<p>ユーザやタスクを管理するテーブルでは ID やデータの作成日時などの情報を付与していましたが，連想テーブルではそういった属性の付与は必要がない限り行いません．
+ここでは，連想データの作成日時はタスクの作成日時と同一とみなせば良いため，特に設定していません．
+また ID については，ユーザ ID とタスク ID からなる<strong>複合主キー</strong> (7 行目) を用いることで重複するユーザ ID とタスク ID のペアを挿入することができなくなり，これによってデータの唯一性は保証できるため設定していません．</p>
+<p>テーブル構造を更新しているため，変更をアプリケーションに反映するためには Docker コンテナの初期化・再構築が必要になります．</p>
+<h3 id="タスク表示処理の変更"><a class="header" href="#タスク表示処理の変更">タスク表示処理の変更</a></h3>
+<p>連想テーブルにしたがって，各ユーザが自身の登録したタスクのみを表示できるよう変更を加えます．
+ここでは特に一覧表示ページ /list に表示されるタスクが自身の登録タスクのみになるよう，<code>service.TaskList</code> 関数を修正します．</p>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">...
+func TaskList(ctx *gin.Context) {
+    userID := sessions.Default(ctx).Get(&quot;user&quot;)
+    ...
+	// Get tasks in DB
+	var tasks []database.Task
+    query := &quot;SELECT id, title, created_at, is_done FROM tasks INNER JOIN ownership ON task_id = id WHERE user_id = ?&quot;
+    switch {
+    case kw != &quot;&quot;:
+        err = db.Select(&amp;tasks, query + &quot; AND title LIKE ?&quot;, userID, &quot;%&quot; + kw + &quot;%&quot;)
+    default:
+        err = db.Select(&amp;tasks, query, userID)
+    }
+    ...
+}
+</code></pre>
+<p>まずはじめにセッション情報からログインユーザの ID を取得します (3 行目)．
+ログインユーザの ID がセッション情報に含まれていることは middleware で確認済みなので，特にエラー処理は実装していません．
+不正なユーザ ID を弾くため，可能であれば middleware 内でユーザ ID が整数値に変換可能であることくらいは検証しても良いでしょう．
+なお，<code>sessions</code> パッケージを使用するため，import ブロックへ <code>github.com/gin-contrib/sessions</code> を追加するのを忘れないようにしてください．</p>
+<p><code>service.TaskList</code> 関数は，<a href="08_search.html">検索キーワードの有無</a>によって DB へ発行するクエリが異なりますが，重複している部分もあるため変数 <code>query</code> として括り出します (7 行目)．
+このクエリでは，<code>INNER JOIN</code> によって <code>tasks</code> テーブルと <code>ownership</code> テーブルを<strong>結合</strong> (特に<strong>内部結合</strong>) し，該当するユーザ ID を持つデータだけを抽出しています．
+<code>INNER JOIN ownership ON task_id = id</code> は，<code>tasks</code> テーブルの <code>id</code> と <code>ownership</code> テーブルの <code>user_id</code> を関連付け，条件に合うデータのみを積集合 \(\mathrm{tasks} \cap \mathrm{ownership}\) から抽出します．
+これにより，DB から取得できるタスクデータはログインユーザに関連付けられたもののみとなり，一覧画面には自身の登録したタスクのみが表示されるようになります．</p>
+<p>なお，変数 <code>query</code> では <code>SELECT</code> の対象として ID やタイトルなどを明示的に指定しています．
+<code>task</code> テーブルと <code>ownership</code> テーブルを結合したことにより，データの持つ属性に <code>ownership</code> テーブルの情報も含まれてしまうため，<code>*</code> による全属性指定では構造体 <code>Task</code> へのデータ束縛に失敗してしまいます．
+したがって，ここでは明示的に取得する属性名を指定する必要があるわけです．
+ちなみに，一般論として <code>SELECT * FROM ...</code> の使用はあまり推奨されず，このように必要な属性値を明示的に指定する方がお作法が良いとされることが多いと思いますので，面倒ですが明示的指定に慣れておく必要もあります．</p>
+<p>ここまでを実装し，ログイン状態でタスクの一覧表示がどのように変化するかを確認してみましょう．
+いまのところユーザに紐づいたタスクは存在しないはずであるため，データが存在しない旨が表示されれば成功です．</p>
+<h5 id="練習問題-10-1"><a class="header" href="#練習問題-10-1">練習問題 10-1</a></h5>
+<p>タスクの一覧表示ページでは，ユーザに関連づいたタスクのみをフィルタリングできるようになりました．
+一方で，現在の実装では適当な ID 値 <code>&lt;id&gt;</code> を指定して URL 欄に直接 /task/&lt;id&gt; などと打ち込むことで，他人のタスクも覗き見ることが可能になっています．
+これと同様に，他人のタスクの編集・削除も可能な状態です．
+こうした挙動はセキュリティリスクですので，これが不可能となるよう実装を修正してください．</p>
+<h3 id="タスク登録処理の変更"><a class="header" href="#タスク登録処理の変更">タスク登録処理の変更</a></h3>
+<p>現状のタスク登録処理では，ユーザとタスクの紐づけを <code>ownership</code> テーブルに書き込む処理がありません．
+したがって，このままタスクの登録処理を行っても，各ユーザのタスク一覧表示画面には永遠に登録したタスクが表示されないことになります．</p>
+<p>ここではタスク登録処理を行う <code>service.RegisterTask</code> 関数を修正し，タスク登録時にタスクとユーザの紐づけを行う機能を実装します．</p>
+<p>タスクの登録処理がとるべき手順は以下の通りになります．</p>
+<ol>
+<li>セッションからユーザ ID の取得</li>
+<li>送信データに基づいて新規タスクの登録</li>
+<li>登録したタスクの ID とユーザ ID を <code>ownership</code> テーブルに記録</li>
+</ol>
+<p>この手順から，修正後のタスク登録処理では，タスクデータの登録および連想テーブルの更新という 2 回の DB 操作が必要であることがわかります．
+こうした複数回の DB 操作を行うにあたって問題となるのは，途中の処理でエラーが発生した場合の処理です．</p>
+<p>たとえば，いまタスクの新規登録は正常に完了したが，連想テーブルの更新に失敗した場合を考えます．
+この場合，タスク自体はたしかに登録されますが，ユーザとの紐づけがなされていないため，このタスクは存在するものの決して表示・編集ができないタスクとなります．
+すなわち，データとしてどこからも参照・操作されず，ただ DB の容量を圧迫するだけの存在となってしまうわけです．</p>
+<p>このような状況が発生してしまうと困ったことになるため，DB 操作が途中で失敗した場合には，すべての操作を巻き戻して元の状態に戻す (<strong>Rollback</strong> する) 仕組みが必要となります．
+こうした機能を実現する DB の仕組みが<strong>トランザクション</strong>です．</p>
+<p>Go 言語の標準パッケージである <code>database/sql</code> は，こうした DB のトランザクションを扱うための機能を有しています．
+したがって，<code>database/sql</code> をラップした <code>github.com/jmoiron/sqlx</code> パッケージでもトランザクションを容易に扱うことができます．</p>
+<p>トランザクションの機能を用いた <code>service.RegisterTask</code> の実装を以下に示します．</p>
+<p><span class="filename">todolist.go/service/task.go</span></p>
+<pre><code class="language-go">...
+func RegisterTask(ctx *gin.Context) {
+    userID := sessions.Default(ctx).Get(&quot;user&quot;)
+    // Get task title
+    ...
+	// Get DB connection
+	db, err := database.GetConnection()
+	if err != nil {
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+    tx := db.MustBegin()
+    result, err := tx.Exec(&quot;INSERT INTO tasks (title) VALUES (?)&quot;, title)
+	if err != nil {
+        tx.Rollback()
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+	}
+    taskID, err := result.LastInsertId()
+    if err != nil {
+        tx.Rollback()
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+    }
+    _, err = tx.Exec(&quot;INSERT INTO ownership (user_id, task_id) VALUES (?, ?)&quot;, userID, taskID)
+    if err != nil {
+        tx.Rollback()
+		Error(http.StatusInternalServerError, err.Error())(ctx)
+		return
+    }
+    tx.Commit()
+    ctx.Redirect(http.StatusFound, fmt.Sprintf(&quot;/task/%d&quot;, taskID))
+}
+</code></pre>
+<p>ユーザ ID は関数の冒頭でセッション情報より取得しています．
+以前説明した部分ですなので，詳細は省略します．</p>
+<p>12 行目の記述は，トランザクションの開始を宣言しています．
+ここから先の DB アクセスは，変数 <code>db</code> ではなく変数 <code>tx</code> を介することで，すべてトランザクション内の処理として実行します．
+トランザクション内の処理は <code>Tx.Commit</code> メソッドが呼ばれるまでは確定されません．
+<code>Tx.Commit</code> メソッドによって確定される前であれば，<code>Tx.Rollback</code> メソッドによって Rollback することで，任意の段階でそれまでの処理をなかったことにできます．</p>
+<p>開始したトランザクションでは，はじめに新規タスクデータの登録を行います (13～18 行目)．
+失敗した場合はトランザクションを Rollback した上でエラーを表示して終了します．</p>
+<p>タスクデータの登録に成功した場合，登録したタスクの ID を取得します (19～24 行目)．
+タスク ID はユーザ ID との関連づけに使用するため，ここで取得しておく必要があります．
+この処理も失敗する可能性があるため，失敗した場合は先ほどと同様にトランザクションを Rollback してエラーを表示します．</p>
+<p>最後に，ユーザ ID とタスク ID のペアを <code>ownership</code> テーブルに登録します (25～30 行目)．
+ここまで問題なく成功したことを確認出来たら，これらの処理を <code>Tx.Commit</code> メソッドにより有効化します (31 行目)．</p>
+<p>以上でタスク登録処理の修正は終了です．
+新しいタスクを登録し，たしかに登録したタスクのみが表示されることを確認してみましょう．
+また，別のユーザでログインし，先ほど登録したタスクが表示されないことを確認しましょう．</p>
+<h2 id="ユーザの削除"><a class="header" href="#ユーザの削除">ユーザの削除</a></h2>
+<p>最後に，ユーザの削除について少し触れておきます．
+本章は特にユーザアカウントの削除処理は少し面倒だということを理解してもらうことを目的とするため，具体的な実装については各自で取り組む課題とします．</p>
+<p>ユーザデータに限らず，アプリケーションの管理するデータを削除するには主に以下の 2 通りの方法が考えられます．</p>
+<ol>
+<li>直接 DB 上から完全に消去してしまう方法 (物理削除)</li>
+<li>削除フラグを立てるだけとし，完全には消去しない方法 (論理削除)</li>
+</ol>
+<p>1 の方法は一般に<strong>物理削除</strong>と呼ばれ，<a href="07_task_management.html#%E6%97%A2%E5%AD%98%E3%82%BF%E3%82%B9%E3%82%AF%E3%81%AE%E5%89%8A%E9%99%A4">タスクデータの削除</a>を実装する際に使用しました．
+この方法は一見簡単に思えますが，ユーザデータを対象とする場合は少々面倒です．</p>
+<p>今回開発しているアプリケーションでは，ユーザにタスクが紐づいています．
+したがってユーザを削除する場合，ユーザの持つタスクも同時に削除するのが自然です．
+そのためには，<code>ownership</code> テーブルから該当するタスクの ID を取得し，<code>tasks</code> テーブルから該当するタスクを削除する必要があります．
+また，<code>ownership</code> テーブルのデータも参照先のタスクが削除された後には不要ですので，これも削除する必要があります．
+このように，ユーザアカウントのようなアプリケーションの動作の根幹に関わるデータを削除しようとすると，連鎖的に複数のデータの削除を行う必要性が生じるため，設計をしっかりしていないとかなり苦労します．
+連想テーブルではカスケード規則を設定することで少し楽ができる部分もありますが，テーブル設計時にカスケード規則の動作への深い理解と適切な適用方法の考慮が必要になります．</p>
+<p>2 の方法は一般に<strong>論理削除</strong>と呼ばれ，イメージとしては多くの OS で採用されている削除されたファイルを一時的にゴミ箱に移動する動作が該当します．
+この方法ではユーザを削除したことを示すデータ (フラグ情報) を保存する領域を用意する必要がありますが，ユーザは実際には削除されていないため，ユーザに紐づいたタスクデータなどを削除する必要はなくなります．
+また，削除したことにしているだけなので，万が一ユーザが復帰したいと申し出た場合でも，即座にユーザアカウントの回復処理を行うことができます．</p>
+<p>一方で，ユーザデータは残ったままなので，恒久的に復帰する可能性がないユーザにとってはセキュリティリスクが高まります．
+また，ユーザが復帰しなければ，そのユーザに関連付けられたタスクは参照も編集もされない「死にデータ」となってしまうため，サービスの継続稼働に伴って不要な記憶領域を圧迫していく原因となり得ます．
+したがって，論理削除したデータに対し一定期間後に物理削除処理を実行するようなシステムの存在は自然であり，結局 1 の方法を実装することになってしまうわけです．</p>
+<p>ここでは特にユーザデータを対象としたデータ削除の方法として 2 つの主な手法を紹介しました．
+どちらも長所と短所を持った方法ですので，目的に合わせて適切な削除処理の実装を考える必要があります．
+冒頭でも述べた通り，<a href="https://cs-sysdes.github.io/todolist.html">基本仕様</a>に示されたユーザ削除処理の具体的な実装については，以下の通り練習問題とします．</p>
+<h5 id="練習問題-10-2"><a class="header" href="#練習問題-10-2">練習問題 10-2</a></h5>
+<p>ユーザの削除機能を実装してみましょう．
+上述したどちらの方法を採用しても構いません．
+また，ユーザに紐づいたタスクを削除するか残しておくかについても，各自でルールを定めて構いません．</p>
+<h2 id="まとめ"><a class="header" href="#まとめ">まとめ</a></h2>
+<p>本演習の資料は以上です．
+<a href="https://cs-sysdes.github.io/report.html">期末レポート課題</a>を出題していますので，単位取得を希望する方は期日までに提出をお願いします，
+おつかれさまでした．</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="09_account_management_1.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="XX_reference.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="09_account_management_1.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="XX_reference.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript" src="theme/highlight-line-numbers.js"></script>
+        <script type="text/javascript" src="theme/custom.js"></script>
+    </body>
+</html>
