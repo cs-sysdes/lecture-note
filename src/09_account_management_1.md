@@ -168,7 +168,7 @@ import (
 
 func RegisterUser(ctx *gin.Context) {
     // フォームデータの受け取り
-    usernmame := ctx.PostForm("usernmame")
+    username := ctx.PostForm("username")
     password := ctx.PostForm("password")
     if username == "" || password == "" {
         Error(http.StatusBadRequest, "Empty parameter")(ctx)
@@ -192,7 +192,7 @@ func RegisterUser(ctx *gin.Context) {
     // 保存状態の確認
     id, _ := result.LastInsertId()
     var user database.User
-    err = db.Get(&user, "SELECT id, name, password, updated_at FROM users WHERE id = ?", id)
+    err = db.Get(&user, "SELECT id, name, password FROM users WHERE id = ?", id)
     if err != nil {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
@@ -281,7 +281,7 @@ todolist.go にもそのような機能を実装し，エラーの内容をわ�
 ...
 func RegisterUser(ctx *gin.Context) {
     // フォームデータの受け取り
-    usernmame := ctx.PostForm("usernmame")
+    username := ctx.PostForm("username")
     password := ctx.PostForm("password")
     switch {
     case username == "":
@@ -324,7 +324,7 @@ func RegisterUser(ctx *gin.Context) {
 ```go
     switch {
     case username == "":
-        ctx.HTML(http.StatusBadRequest, "new_user_form.html", gin.H{"Title": "Register user", "Error": "Usernane is not provided", "Username": username})
+        ctx.HTML(http.StatusBadRequest, "new_user_form.html", gin.H{"Title": "Register user", "Error": "Username is not provided", "Username": username})
     case password == "":
         ctx.HTML(http.StatusBadRequest, "new_user_form.html", gin.H{"Title": "Register user", "Error": "Password is not provided", "Password": password})
     }
