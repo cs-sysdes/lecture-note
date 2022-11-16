@@ -3357,7 +3357,7 @@ import (
 
 func RegisterUser(ctx *gin.Context) {
     // フォームデータの受け取り
-    usernmame := ctx.PostForm(&quot;usernmame&quot;)
+    username := ctx.PostForm(&quot;username&quot;)
     password := ctx.PostForm(&quot;password&quot;)
     if username == &quot;&quot; || password == &quot;&quot; {
         Error(http.StatusBadRequest, &quot;Empty parameter&quot;)(ctx)
@@ -3381,7 +3381,7 @@ func RegisterUser(ctx *gin.Context) {
     // 保存状態の確認
     id, _ := result.LastInsertId()
     var user database.User
-    err = db.Get(&amp;user, &quot;SELECT id, name, password, updated_at FROM users WHERE id = ?&quot;, id)
+    err = db.Get(&amp;user, &quot;SELECT id, name, password FROM users WHERE id = ?&quot;, id)
     if err != nil {
 		Error(http.StatusInternalServerError, err.Error())(ctx)
 		return
@@ -3448,7 +3448,7 @@ todolist.go にもそのような機能を実装し，エラーの内容をわ�
 <pre><code class="language-go">...
 func RegisterUser(ctx *gin.Context) {
     // フォームデータの受け取り
-    usernmame := ctx.PostForm(&quot;usernmame&quot;)
+    username := ctx.PostForm(&quot;username&quot;)
     password := ctx.PostForm(&quot;password&quot;)
     switch {
     case username == &quot;&quot;:
@@ -3488,7 +3488,7 @@ func RegisterUser(ctx *gin.Context) {
 <p>これを switch 文を使用してエラーの種類を識別し，以下のように適切なエラー文を表示するよう修正しています．</p>
 <pre><code class="language-go">    switch {
     case username == &quot;&quot;:
-        ctx.HTML(http.StatusBadRequest, &quot;new_user_form.html&quot;, gin.H{&quot;Title&quot;: &quot;Register user&quot;, &quot;Error&quot;: &quot;Usernane is not provided&quot;, &quot;Username&quot;: username})
+        ctx.HTML(http.StatusBadRequest, &quot;new_user_form.html&quot;, gin.H{&quot;Title&quot;: &quot;Register user&quot;, &quot;Error&quot;: &quot;Username is not provided&quot;, &quot;Username&quot;: username})
     case password == &quot;&quot;:
         ctx.HTML(http.StatusBadRequest, &quot;new_user_form.html&quot;, gin.H{&quot;Title&quot;: &quot;Register user&quot;, &quot;Error&quot;: &quot;Password is not provided&quot;, &quot;Password&quot;: password})
     }
