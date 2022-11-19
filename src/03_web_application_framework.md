@@ -83,7 +83,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 コールバック関数として登録される `rootHandler` 関数は，引数として `http.ResponseWriter` および `*http.Request` の 2 つの構造体をとります．
 
 第1引数である `http.ResponseWriter` 型の変数 `w` は，HTTPレスポンスとしてヘッダ情報や BODY を書き込むための変数であり，12 行目や 16 行目のように`http.ResponseWriter.WriteHeader` メソッドによって BODY が空のヘッダ情報だけを返すことができたり，19 行目のように `http.ResponseWriter.Write` メソッドによって BODY を含めたレスポンスを返すことができます．
-なお，`http.ResponseWriter.Write` 関数は，引数によって渡された BODY に喜寿されるべきバイト列から自動で `Content-Length` の値を計算し，HTTP header としてレスポンスに含めてくれます．
+なお，`http.ResponseWriter.Write` 関数は，引数によって渡された BODY に記述されるべきバイト列から自動で `Content-Length` の値を計算し，HTTP header としてレスポンスに含めてくれます．
 
 第2引数である `*http.Request` 型の変数 `r` は，HTTPリクエストを格納している変数であり，パスやメソッドなどの情報はすでにパースされて構造体のメンバとして保存されています．
 前回のプログラムでは自分で `strings.Split` 関数などを用いてメソッドの種類やパスを取得する必要がありましたが，`http.Request` を介することで，`http.Request.Method` や `http.Request.URL` などによってメソッドやパスを直接参照することができるようになっています．
