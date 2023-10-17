@@ -136,7 +136,7 @@ func hash(pw string) []byte {
     const salt = "todolist.go#"
     h := sha256.New()
     h.Write([]byte(salt))
-    h.Write(pw)
+    h.Write([]byte(pw))
     return h.Sum(nil)
 }
 ```
